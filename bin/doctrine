@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+use mikemeier\ConsoleGame\DependencyInjection\ContainerInterface;
+
+/** @var ContainerInterface $dic */
+$dic = require __DIR__.'/../dic/bootstrap.php';
+
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+
+ConsoleRunner::run(ConsoleRunner::createHelperSet($dic->get('em')));

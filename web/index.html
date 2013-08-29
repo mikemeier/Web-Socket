@@ -1,0 +1,120 @@
+<html>
+    <head>
+        <title>ConsoleGame</title>
+        <script src="jquery.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="script.js"></script>
+        <script>
+            function scrollOutputToBottom(){
+                var elem = $('#output');
+                elem.scrollTop(elem[0].scrollHeight);
+            }
+
+            function isOutputScrollOnBottom(){
+                var elem = $('#output');
+                return elem[0].scrollHeight - elem.scrollTop() == elem.outerHeight();
+            }
+
+            function addLine(line){
+                var doScroll = isOutputScrollOnBottom();
+                $('[data-output]').append('<li>'+ line +'</li>');
+                if(doScroll == true){
+                    scrollOutputToBottom();
+                }
+            }
+
+            function setUserCount(number){
+                var container = $('[data-user-count-container]');
+                if(!number){
+                    container.hide();
+                    return;
+                }
+                container.show();
+                $('[data-user-count]').html(number);
+            }
+
+            function setStatus(status){
+                $('[data-status]').html(status);
+                $('[data-status-container]').removeClass().addClass(status.toLowerCase());
+            }
+
+            function setUsername(username){
+                var container = $('[data-username-container]');
+                if(!username){
+                    container.hide();
+                    return;
+                }
+                $('[data-username]').html(username);
+                container.show();
+            }
+
+            $(function(){
+                var Socket = new SocketConsole('ws://localhost:8080');
+                Socket.connect();
+
+                Socket.on('usernumber', function(number){
+                    setUserCount(number);
+                });
+
+                Socket.on('loggedin', function(username){
+                    setUsername(username);
+                });
+
+                Socket.on('loggedout', function(){
+                    setUsername();
+                });
+
+                Socket.on('output', function(){
+                    for(var i = 0; i < arguments.length; i++){
+                        addLine(arguments[i]);
+                    }
+                });
+
+                Socket.on('open', function(){
+                    setStatus('Connected');
+                });
+
+                Socket.on('reconnect', function(){
+                    setStatus('Reconnecting');
+                });
+
+                Socket.on('error', function(){
+                    setStatus('Error');
+                    setUsername();
+                });
+
+                Socket.on('close', function(){
+                    setStatus('Offline');
+                    setUserCount();
+                    setUsername();
+                });
+
+                $(function(){
+                    $(document).click(function(){
+                        $('[data-input]').focus();
+                    });
+
+                    $('[data-input]').focus().keyup(function(e){
+                        if(e.which == 13){
+                            var elem = $(this);
+                            var value = elem.val();
+                            Socket.send('command', [value]);
+                            elem.val('');
+                        }
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="board">
+            <ul>
+                <li class="status"><span class="connecting" data-status-container>Uplink: <span data-status>Connecting</span></span></li>
+                <li class="usercount" data-user-count-container style="display:none;">Online: <span data-user-count></span></li>
+                <li class="username" data-username-container style="display:none;">Username: <span data-username></span></li>
+            </ul>
+        </div>
+        <ul id="output" data-output></ul>
+        <input id="input" type="text" value="" data-input>
+    </body>
+</html>

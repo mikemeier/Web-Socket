@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+use mikemeier\ConsoleGame\Server\Client\ClientPool;
+use Ratchet\Server\IoServer;
+use Ratchet\WebSocket\WsServer;
+use mikemeier\ConsoleGame\Server\ConsoleServer;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
+use mikemeier\ConsoleGame\DependencyInjection\ContainerInterface;
+
+/** @var ContainerInterface $dic */
+$dic = require __DIR__.'/../dic/bootstrap.php';
+
+/** @var EntityManager $em */
+$em = $dic->get('em');
+
+$tool = new SchemaTool($em);
+if(isset($argv[1]) && $argv[1] == "--drop"){
+    $tool->dropDatabase();
+}
+$tool->updateSchema($em->getMetadataFactory()->getAllMetadata());
+
+$pool       = new ClientPool();
+$server     = new ConsoleServer($pool, $dic->get('commands'), $dic->get('decorators'));
+$wsServer   = new WsServer($server);
+$ioServer   = IoServer::factory($wsServer, 8080);
+
+$ioServer->run();
