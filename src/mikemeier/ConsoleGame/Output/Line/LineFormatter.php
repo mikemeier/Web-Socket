@@ -12,7 +12,10 @@ class LineFormatter
     {
         $str = '';
         foreach($line->getParts() as $part){
-            $str .= '<span class="'. implode(" ", $part->getStyles()) .'">'. $part->getText() .'</span>';
+            $text = str_replace(" ", "&nbsp;", $part->getText());
+            $text = preg_replace('|<([a-z]+)>|', '<span class="$1">', $text);
+            $text = preg_replace('|</[a-z]+>|', '</span>', $text);
+            $str .= '<span class="'. implode(" ", $part->getStyles()) .'">'. $text .'</span>';
         }
         return $str;
     }

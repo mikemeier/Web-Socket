@@ -53,6 +53,10 @@ html, body {
     color: white;
 }
 
+#output .list {
+    color: orange;
+}
+
 #output .description {
     color: orange;
 }

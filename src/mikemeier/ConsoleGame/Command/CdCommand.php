@@ -23,10 +23,6 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
                 $this->changeAbsolute($console, $directoryName);
                 return;
             }
-            if(substr($directoryName, 0, 2) == '..'){
-                $this->changeParent($console);
-                return;
-            }
             $this->changeRelative($console, $directoryName);
         }else{
             $this->setCwd($console, $this->getHomeDirectory($this->getUser($console)->getUsername()));
@@ -66,37 +62,13 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
     /**
      * @param Console $console
      * @param Directory $start
-     * @param $path
+     * @param string $path
      */
     protected function change(Console $console, Directory $start, $path)
     {
-        $child = $start;
-        foreach($this->getDirectories($path) as $name){
-            if(!$child = $child->getChild($name)){
-                $console->write('Invalid directory "'. $path .'"', 'error');
-                return;
-            }
+        if($directory = $this->findDirectory($console, $start, $path)){
+            $this->setCwd($console, $directory);
         }
-        $this->setCwd($console, $child);
-    }
-
-    /**
-     * @param Console $console
-     */
-    protected function changeParent(Console $console)
-    {
-        if($parent = $this->getCwd($console)->getParent()){
-            $this->setCwd($console, $parent);
-        }
-    }
-
-    /**
-     * @param string $path
-     * @return array
-     */
-    protected function getDirectories($path)
-    {
-        return array_filter(explode("/", $path));
     }
 
     /**

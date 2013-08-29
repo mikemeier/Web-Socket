@@ -22,7 +22,15 @@ class ListCommand extends AbstractCommand
             if(!$command->isAvailable($console)){
                 continue;
             }
-            $console->write('* '. $command->getName());
+            $console->write(' * '. $command->getName(), 'list');
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return 'List all available commands';
     }
 }

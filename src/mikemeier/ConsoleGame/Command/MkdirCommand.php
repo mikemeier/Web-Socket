@@ -38,7 +38,7 @@ class MkdirCommand extends AbstractUserCommand
     public function getInputDefinition()
     {
         return new InputDefinition(array(
-            new InputArgument('name')
+            new InputArgument('name', InputArgument::REQUIRED, 'Name of the directory to create')
         ));
     }
 }

@@ -54,4 +54,9 @@ interface CommandInterface
      * @return array
      */
     public function getAliases();
+
+    /**
+     * @return string
+     */
+    public function getDescription();
 }

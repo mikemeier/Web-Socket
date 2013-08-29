@@ -15,19 +15,25 @@ class LsCommand extends AbstractUserCommand
      */
     public function execute(InputInterface $input, Console $console)
     {
-        foreach(array('.', '..') as $default){
-            $line = new Line();
-            $line->add('d', 'tab-20');
-            $line->add($default);
-            $console->writeLine($line);
+        foreach(array('.', '..') as $name){
+            $this->outputDirectory($console, $name);
         }
 
         foreach($this->getCwd($console)->getChildren() as $child){
-            $line = new Line();
-            $line->add('d', 'tab-20');
-            $line->add($child->getName());
-            $console->writeLine($line);
+            $this->outputDirectory($console, $child->getName());
         }
+    }
+
+    /**
+     * @param Console $console
+     * @param string $name
+     */
+    protected function outputDirectory(Console $console, $name)
+    {
+        $line = new Line();
+        $line->add(' d ');
+        $line->add($name, 'directory');
+        $console->writeLine($line);
     }
 
     /**

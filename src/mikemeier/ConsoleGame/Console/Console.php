@@ -5,7 +5,6 @@ namespace mikemeier\ConsoleGame\Console;
 use mikemeier\ConsoleGame\Command\AutocompletableCommandInterface;
 use mikemeier\ConsoleGame\Command\CommandInterface;
 use mikemeier\ConsoleGame\Command\Proxy\SymfonyCommandProxy;
-use mikemeier\ConsoleGame\Output\ConsoleOutput;
 use mikemeier\ConsoleGame\Output\Line\Decorator\DecoratorInterface;
 use mikemeier\ConsoleGame\Output\Line\Line;
 use mikemeier\ConsoleGame\Output\Line\LineFormatter;
@@ -14,6 +13,7 @@ use mikemeier\ConsoleGame\Server\Message\Message;
 use Symfony\Component\Console\Descriptor\TextDescriptor;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class Console
 {
@@ -121,7 +121,7 @@ class Console
 
         if(!$command = $this->getCommand($name)){
             $this->writeFeedback($input);
-
+            $this->writeCommandNotFound($name);
             return;
         }
 
@@ -183,6 +183,8 @@ class Console
             $this->writeFeedback($command->getFeedback($input, $feedback));
         }catch(\Exception $e){
             if($describeIfNotValid == true){
+                $this->writeFeedback($command->getFeedback($input, $feedback));
+                $this->write('Invalid command call', 'error');
                 $this->describe($command);
             }
             return;
@@ -196,10 +198,18 @@ class Console
      */
     public function describe(CommandInterface $command)
     {
-        $this->write('Command definition:', array('description'));
+        if($description = $command->getDescription()){
+            $this->write('Description:', 'description');
+            $this->write(' '.$command->getDescription(), 'description');
+        }
 
         $descriptor = new TextDescriptor();
-        $descriptor->describe(new ConsoleOutput($this), new SymfonyCommandProxy($command));
+        $output = new BufferedOutput();
+        $descriptor->describe($output, new SymfonyCommandProxy($command));
+
+        foreach(array_slice(explode("\n", $output->fetch()), 0, -2) as $line){
+            $this->write($line, 'description');
+        }
 
         return;
     }

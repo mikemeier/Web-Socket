@@ -2,8 +2,8 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
-use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
+use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +38,9 @@ class LoginCommand extends AbstractCommand
      */
     public function getFeedback(InputInterface $input, $default = null)
     {
-        return $this->getName().' '. $input->getArgument('username') .' ****';
+        return $this->prepareFeedback($input, array(
+            'password' => str_repeat('*', strlen($input->getArgument('password')))
+        ));
     }
 
     /**
@@ -47,8 +49,8 @@ class LoginCommand extends AbstractCommand
     public function getInputDefinition()
     {
         return new InputDefinition(array(
-            new InputArgument('username', InputArgument::REQUIRED),
-            new InputArgument('password', InputArgument::REQUIRED)
+            new InputArgument('username', InputArgument::REQUIRED, 'Username for login'),
+            new InputArgument('password', InputArgument::REQUIRED, 'Password for login')
         ));
     }
 }

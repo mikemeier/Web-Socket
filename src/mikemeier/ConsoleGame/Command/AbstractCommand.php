@@ -58,6 +58,69 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     * @param Console $console
+     * @param Directory $start
+     * @param string $path
+     * @return Directory
+     */
+    protected function findDirectory(Console $console, Directory $start, $path)
+    {
+        $child = $start;
+        foreach($this->getDirectoryNames($path) as $name){
+            if($name == '..'){
+                $child = $child->getParent();
+                continue;
+            }
+            if(!$child || !$child = $child->getChild($name)){
+                $console->write('Invalid directory "'. $path .'"', 'error');
+                return null;
+            }
+        }
+        return $child;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param array $argumentsReplace
+     * @return string
+     */
+    protected function prepareFeedback(InputInterface $input, array $argumentsReplace = array())
+    {
+        $feedback = array($this->getName());
+        $definition = $this->getInputDefinition();
+        foreach($definition->getOptions() as $option){
+            $text = '--'.$option->getName();
+            if($option->acceptValue()){
+                $text .= '='.$input->getOption($option->getName());
+            }
+            $feedback[] = $text;
+        }
+        foreach($definition->getArguments() as $argument){
+            $argumentName = $argument->getName();
+            $feedback[] = isset($argumentsReplace[$argumentName]) ?
+                $argumentsReplace[$argumentName] : $input->getArgument($argument->getName());
+        }
+        return implode(" ", $feedback);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return null;
+    }
+
+    /**
+     * @param string $path
+     * @return array
+     */
+    protected function getDirectoryNames($path)
+    {
+        return array_filter(explode("/", $path));
+    }
+
+    /**
      * @return string
      */
     public function getName()

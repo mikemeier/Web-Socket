@@ -53,7 +53,9 @@ class RegisterCommand extends AbstractCommand
      */
     public function getFeedback(InputInterface $input, $default = null)
     {
-        return $this->getName().' '. $input->getArgument('username');
+        return $this->prepareFeedback($input, array(
+            'password' => str_repeat('*', strlen($input->getArgument('password')))
+        ));
     }
 
     /**

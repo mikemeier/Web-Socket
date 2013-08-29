@@ -21,5 +21,6 @@ class SymfonyCommandProxy extends Command
         $this->setName($command->getName());
         $this->setAliases($command->getAliases());
         $this->setDefinition($command->getInputDefinition());
+        $this->setDescription($command->getDescription());
     }
 }
