@@ -9,10 +9,10 @@ use mikemeier\ConsoleGame\User\User;
 class DirectoryRepository extends EntityRepository
 {
     /**
-     * @param User $user
+     * @param string $username
      * @return Directory
      */
-    public function getHomeDirectory(User $user)
+    public function getHomeDirectory($username)
     {
         $usersDirectory = $this->getUsersDirectory();
         $qb = $this->createQueryBuilder('d');
@@ -21,7 +21,7 @@ class DirectoryRepository extends EntityRepository
             ->where('d.parent = :usersdirectory')
             ->andWhere('d.name = :username')
             ->setParameter('usersdirectory', $usersDirectory)
-            ->setParameter('username', $user->getUsername())
+            ->setParameter('username', $username)
         ;
 
         if($directory = $qb->getQuery()->getOneOrNullResult()){
@@ -33,10 +33,22 @@ class DirectoryRepository extends EntityRepository
         $this->saveDirectory(
             $directory
                 ->setParent($usersDirectory)
-                ->setName($user->getUsername())
+                ->setName($username)
         );
 
         return $directory;
+    }
+
+    /**
+     * @param Directory $parent
+     * @param string $name
+     * @return $this
+     */
+    public function createDirectory(Directory $parent, $name)
+    {
+        $directory = new Directory();
+        $this->saveDirectory($directory->setParent($parent)->setName($name));
+        return $this;
     }
 
     /**

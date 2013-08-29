@@ -2,6 +2,7 @@
 
 namespace mikemeier\ConsoleGame\Console;
 
+use mikemeier\ConsoleGame\Command\AutocompletableCommandInterface;
 use mikemeier\ConsoleGame\Output\ConsoleOutput;
 use mikemeier\ConsoleGame\Output\Line\Decorator\UserDecorator;
 use mikemeier\ConsoleGame\Output\Line\Line;
@@ -84,13 +85,24 @@ class Console
     }
 
     /**
-     * @return DecoratorInterface[]
+     * @param string $input
      */
-    protected function getDecorators()
+    public function tab($input)
     {
-        return array(
-            new UserDecorator($this->getClient())
-        );
+        if(!$input){
+            return;
+        }
+
+        $explode = explode(" ", $input);
+        $name = isset($explode[0]) ? strtolower($explode[0]) : null;
+
+        if(
+            ($command = $this->getCommand($name)) &&
+            $command instanceof AutocompletableCommandInterface &&
+            $autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)
+        ){
+            $this->getClient()->send(new Message('autocomplete', array($autocomplete)));
+        }
     }
 
     /**
@@ -98,6 +110,11 @@ class Console
      */
     public function process($input)
     {
+        if(!$input){
+            $this->processCommand($this->getCommand('list'));
+            return;
+        }
+
         $explode = explode(" ", $input);
         $name = isset($explode[0]) ? strtolower($explode[0]) : null;
 
@@ -143,7 +160,7 @@ class Console
      * @param bool $describeIfNotValid
      * @param string $feedback
      */
-    public function processCommand(CommandInterface $command, InputInterface $input = null, $describeIfNotValid = true, $feedback = null)
+    public function processCommand(CommandInterface $command, InputInterface $input = null, $describeIfNotValid = false, $feedback = null)
     {
         $input = $input ?: new StringInput('');
         try {
@@ -156,7 +173,6 @@ class Console
             }
             return;
         }
-
         $command->execute($input, $this);
     }
 

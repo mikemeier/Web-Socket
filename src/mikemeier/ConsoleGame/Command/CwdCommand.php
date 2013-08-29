@@ -15,7 +15,7 @@ class CwdCommand extends AbstractUserCommand
      */
     protected function doExecute(InputInterface $input, Console $console)
     {
-        $console->write($this->getCwd($console)->getAbsolutePath());
+        $this->writeCwd($console);
     }
 
     /**

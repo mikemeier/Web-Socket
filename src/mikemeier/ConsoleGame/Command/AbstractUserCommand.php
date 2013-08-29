@@ -16,7 +16,7 @@ abstract class AbstractUserCommand extends AbstractCommand
      */
     public function execute(InputInterface $input, Console $console)
     {
-        if(!$console->getClient()->getUser()){
+        if(!$this->hasUser($console)){
             $console->write($this->getName() .': command not found', 'error');
             return;
         }
@@ -24,12 +24,29 @@ abstract class AbstractUserCommand extends AbstractCommand
     }
 
     /**
-     * @param User $user
+     * @param Console $console
+     */
+    protected function writeCwd(Console $console)
+    {
+        $console->write('', null, true);
+    }
+
+    /**
+     * @param Console $console
+     * @return bool
+     */
+    protected function hasUser(Console $console)
+    {
+        return (bool)$console->getClient()->getUser();
+    }
+
+    /**
+     * @param string $username
      * @return Directory
      */
-    protected function getHomeDirectory(User $user)
+    protected function getHomeDirectory($username)
     {
-        return $this->getDirectoryRepository()->getHomeDirectory($user);
+        return $this->getDirectoryRepository()->getHomeDirectory($username);
     }
 
     /**

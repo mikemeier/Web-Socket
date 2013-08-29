@@ -34,6 +34,7 @@ class Directory
     /**
      * @var Directory[]
      * @ORM\OneToMany(targetEntity="Directory", mappedBy="parent")
+     * @ORM\OrderBy({"name"="ASC"})
      */
     protected $children;
 

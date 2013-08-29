@@ -67,6 +67,14 @@ html, body {
     display: inline-block;
 }
 
+#output .error {
+    color: red;
+}
+
+#output .success {
+    color: green;
+}
+
 #input {
     position: fixed;
     bottom: 0;

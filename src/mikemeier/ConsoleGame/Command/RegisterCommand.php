@@ -35,14 +35,15 @@ class RegisterCommand extends AbstractCommand
         $em->persist($user);
         $em->flush();
 
+        $this->getDirectoryRepository()->getHomeDirectory($username);
+        $console->write('OK', 'success');
+
         if($input->getOption('login')){
             $console->processCommand($console->getCommand('login'), new ArrayInput(array(
                 'username' => $username,
                 'password' => $password
             )));
         }
-
-        $console->write('OK', 'success');
     }
 
     /**

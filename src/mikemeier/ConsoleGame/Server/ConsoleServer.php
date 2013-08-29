@@ -94,12 +94,17 @@ class ConsoleServer implements MessageComponentInterface
             return;
         }
 
-        if(
-            $data['event'] == "command" &&
-            isset($data['arguments'][0]) &&
-            $client = $this->pool->getClient($connection)
-        ){
-            $client->getConsole()->process($data['arguments'][0]);
+        switch($data['event']){
+            case 'command':
+                if(isset($data['arguments'][0]) && $client = $this->pool->getClient($connection)){
+                    $client->getConsole()->process(trim($data['arguments'][0]));
+                }
+                break;
+            case 'tab':
+                if(isset($data['arguments'][0]) && $client = $this->pool->getClient($connection)){
+                    $client->getConsole()->tab(trim($data['arguments'][0]));
+                }
+                break;
         }
     }
 

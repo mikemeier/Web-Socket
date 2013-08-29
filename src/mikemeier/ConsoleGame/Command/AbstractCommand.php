@@ -104,7 +104,7 @@ abstract class AbstractCommand implements CommandInterface
             ->setUser($user)
             ->send(new Message('loggedin', array($user->getUsername())))
         ;
-        $this->setCwd($console, $this->getDirectoryRepository()->getHomeDirectory($user));
+        $this->setCwd($console, $this->getDirectoryRepository()->getHomeDirectory($user->getUsername()));
         return $this;
     }
 

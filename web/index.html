@@ -64,6 +64,10 @@
                     setUsername();
                 });
 
+                Socket.on('autocomplete', function(autocomplete){
+                    $('[data-input]').val(autocomplete);
+                });
+
                 Socket.on('output', function(){
                     for(var i = 0; i < arguments.length; i++){
                         addLine(arguments[i]);
@@ -94,8 +98,18 @@
                         $('[data-input]').focus();
                     });
 
-                    $('[data-input]').focus().keyup(function(e){
+                    $('[data-input]').focus().keydown(function(e){
+                        // Tab
+                        if(e.which == 9){
+                            e.preventDefault();
+                            var elem = $(this);
+                            var value = elem.val();
+                            Socket.send('tab', [value]);
+                        }
+
+                        // Enter
                         if(e.which == 13){
+                            e.preventDefault();
                             var elem = $(this);
                             var value = elem.val();
                             Socket.send('command', [value]);

@@ -4,11 +4,12 @@ namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
+use mikemeier\ConsoleGame\Output\Line\Line;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
-class CdCommand extends AbstractUserCommand
+class CdCommand extends AbstractUserCommand implements AutocompletableCommandInterface
 {
     /**
      * @param InputInterface $input
@@ -28,7 +29,7 @@ class CdCommand extends AbstractUserCommand
             }
             $this->changeRelative($console, $directoryName);
         }else{
-            $this->setCwd($console, $this->getHomeDirectory($this->getUser($console)));
+            $this->setCwd($console, $this->getHomeDirectory($this->getUser($console)->getUsername()));
         }
     }
 
@@ -40,8 +41,7 @@ class CdCommand extends AbstractUserCommand
     protected function setCwd(Console $console, Directory $directory = null)
     {
         parent::setCwd($console, $directory);
-        $command = $console->getCommand('cwd');
-        $console->processCommand($command);
+        $this->writeCwd($console);
         return $this;
     }
 
@@ -99,10 +99,50 @@ class CdCommand extends AbstractUserCommand
         return array_filter(explode("/", $path));
     }
 
+    /**
+     * @return InputDefinition
+     */
     public function getInputDefinition()
     {
         return new InputDefinition(array(
             new InputArgument('directory')
         ));
+    }
+
+    /**
+     * @param string $input
+     * @param Console $console
+     * @return bool|string
+     */
+    public function autocomplete($input, Console $console)
+    {
+        $cwd = $this->getCwd($console);
+
+        if($input){
+            $matches = array();
+            foreach($cwd->getChildren() as $child){
+                $name = $child->getName();
+                if(strtolower(substr($name, 0, strlen($input))) == strtolower($input)){
+                    $matches[] = $child;
+                }
+            }
+        }else{
+            $matches = $cwd->getChildren();
+        }
+
+        $count = count($matches);
+        if($count == 1){
+            return $this->getName().' '.$matches[0]->getName();
+        }
+
+        if($count > 1){
+            $this->writeCwd($console);
+            foreach($matches as $directory){
+                $line = new Line();
+                $line->add('d', 'tab-20');
+                $line->add($directory->getName());
+                $console->writeLine($line);
+            }
+        }
     }
 }
