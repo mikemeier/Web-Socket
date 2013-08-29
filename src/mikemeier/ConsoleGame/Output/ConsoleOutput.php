@@ -35,9 +35,10 @@ class ConsoleOutput implements OutputInterface
     public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
     {
         $messages = is_array($messages) ? $messages : array($messages);
-        foreach($messages as $message){
-            $this->console->write($message);
+        if($text = implode("", $messages)){
+            $this->console->write($text);
         }
+
     }
 
     /**

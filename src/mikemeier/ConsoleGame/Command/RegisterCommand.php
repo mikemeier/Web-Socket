@@ -2,8 +2,8 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
-use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
+use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -62,9 +62,9 @@ class RegisterCommand extends AbstractCommand
     public function getInputDefinition()
     {
         return new InputDefinition(array(
-            new InputArgument('username', InputArgument::REQUIRED),
-            new InputArgument('password', InputArgument::REQUIRED),
-            new InputOption('login')
+            new InputArgument('username', InputArgument::REQUIRED, 'Username for login'),
+            new InputArgument('password', InputArgument::REQUIRED, 'Password for login'),
+            new InputOption('login', null, null, 'If given, auto-login after successfull registration')
         ));
     }
 }

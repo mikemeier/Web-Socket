@@ -4,11 +4,22 @@ namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\DependencyInjection\ContainerInterface;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputInterface;
 
 interface CommandInterface
 {
+    /**
+     * @return string
+     */
+    public function __toString();
+
+    /**
+     * @param Console $console
+     * @return bool
+     */
+    public function isAvailable(Console $console);
+
     /**
      * @param InputInterface $input
      * @param Console $console

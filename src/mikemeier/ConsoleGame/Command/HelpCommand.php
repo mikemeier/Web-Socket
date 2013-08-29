@@ -6,8 +6,9 @@ use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class MkdirCommand extends AbstractUserCommand
+class HelpCommand extends AbstractCommand
 {
     /**
      * @param InputInterface $input
@@ -16,20 +17,13 @@ class MkdirCommand extends AbstractUserCommand
      */
     public function execute(InputInterface $input, Console $console)
     {
-        $name = $input->getArgument('name');
-        if(!$sanitized = preg_replace('/[^a-zA-Z]+/', '', $name)){
-            $console->write('Invalid name: '. $name, 'error');
+        $commandName = $input->getArgument('command');
+        if(!($command = $console->getCommand($commandName)) || !$command->isAvailable($console)){
+            $console->writeCommandNotFound($commandName);
             return;
         }
 
-        $cwd = $this->getCwd($console);
-        if($cwd->getChild($sanitized)){
-            $console->write('Already exists: '. $sanitized, 'error');
-            return;
-        }
-
-        $this->getDirectoryRepository()->createDirectory($cwd, $sanitized);
-        $console->write('OK', 'success');
+        $console->describe($command);
     }
 
     /**
@@ -38,7 +32,7 @@ class MkdirCommand extends AbstractUserCommand
     public function getInputDefinition()
     {
         return new InputDefinition(array(
-            new InputArgument('name')
+            new InputArgument('command', InputArgument::REQUIRED)
         ));
     }
 }

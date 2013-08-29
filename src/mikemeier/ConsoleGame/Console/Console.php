@@ -3,15 +3,15 @@
 namespace mikemeier\ConsoleGame\Console;
 
 use mikemeier\ConsoleGame\Command\AutocompletableCommandInterface;
+use mikemeier\ConsoleGame\Command\CommandInterface;
+use mikemeier\ConsoleGame\Command\Proxy\SymfonyCommandProxy;
 use mikemeier\ConsoleGame\Output\ConsoleOutput;
-use mikemeier\ConsoleGame\Output\Line\Decorator\UserDecorator;
+use mikemeier\ConsoleGame\Output\Line\Decorator\DecoratorInterface;
 use mikemeier\ConsoleGame\Output\Line\Line;
 use mikemeier\ConsoleGame\Output\Line\LineFormatter;
 use mikemeier\ConsoleGame\Server\Client\Client;
 use mikemeier\ConsoleGame\Server\Message\Message;
-use mikemeier\ConsoleGame\Output\Line\Decorator\DecoratorInterface;
-use mikemeier\ConsoleGame\Command\CommandInterface;
-use Symfony\Component\Console\Descriptor\MarkdownDescriptor;
+use Symfony\Component\Console\Descriptor\TextDescriptor;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 
@@ -90,6 +90,7 @@ class Console
     public function tab($input)
     {
         if(!$input){
+            $this->processCommand($this->getCommand('list'));
             return;
         }
 
@@ -99,6 +100,7 @@ class Console
         if(
             ($command = $this->getCommand($name)) &&
             $command instanceof AutocompletableCommandInterface &&
+            $command->isAvailable($this) &&
             $autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)
         ){
             $this->getClient()->send(new Message('autocomplete', array($autocomplete)));
@@ -111,7 +113,6 @@ class Console
     public function process($input)
     {
         if(!$input){
-            $this->processCommand($this->getCommand('list'));
             return;
         }
 
@@ -120,11 +121,19 @@ class Console
 
         if(!$command = $this->getCommand($name)){
             $this->writeFeedback($input);
-            $this->write($name .': command not found', 'error');
+
             return;
         }
 
         $this->processCommand($command, new StringInput(implode(" ", array_slice($explode, 1))), true, $input);
+    }
+
+    /**
+     * @param string $command
+     */
+    public function writeCommandNotFound($command)
+    {
+        $this->write($command .': command not found', 'error');
     }
 
     /**
@@ -162,6 +171,11 @@ class Console
      */
     public function processCommand(CommandInterface $command, InputInterface $input = null, $describeIfNotValid = false, $feedback = null)
     {
+        if(!$command->isAvailable($this)){
+            $this->writeCommandNotFound($command->getName());
+            return;
+        }
+
         $input = $input ?: new StringInput('');
         try {
             $input->bind($command->getInputDefinition());
@@ -173,28 +187,19 @@ class Console
             }
             return;
         }
+
         $command->execute($input, $this);
     }
 
     /**
      * @param CommandInterface $command
      */
-    protected function describe(CommandInterface $command)
+    public function describe(CommandInterface $command)
     {
-        if(!$arguments = $command->getInputDefinition()->getArguments()){
-            $this->write('No arguments allowed', 'error');
-            return;
-        }
+        $this->write('Command definition:', array('description'));
 
-        $this->write('Invalid arguments - Definition:', array('error'));
-
-        $descriptor = new MarkdownDescriptor();
-        foreach($arguments as $argument){
-            $descriptor->describe(new ConsoleOutput($this), $argument, array(
-                'raw_text' => false,
-                'format' => 'txt'
-            ));
-        }
+        $descriptor = new TextDescriptor();
+        $descriptor->describe(new ConsoleOutput($this), new SymfonyCommandProxy($command));
 
         return;
     }

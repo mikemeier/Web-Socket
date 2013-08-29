@@ -4,7 +4,7 @@ namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
 
-interface AutocompletableCommandInterface
+interface AutocompletableCommandInterface extends CommandInterface
 {
     /**
      * @param string $input

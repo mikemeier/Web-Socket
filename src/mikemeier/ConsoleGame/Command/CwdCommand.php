@@ -3,7 +3,6 @@
 namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
-use mikemeier\ConsoleGame\Output\Line\Line;
 use Symfony\Component\Console\Input\InputInterface;
 
 class CwdCommand extends AbstractUserCommand
@@ -13,9 +12,9 @@ class CwdCommand extends AbstractUserCommand
      * @param Console $console
      * @return void
      */
-    protected function doExecute(InputInterface $input, Console $console)
+    public function execute(InputInterface $input, Console $console)
     {
-        $this->writeCwd($console);
+        $this->writeEmptyLine($console);
     }
 
     /**

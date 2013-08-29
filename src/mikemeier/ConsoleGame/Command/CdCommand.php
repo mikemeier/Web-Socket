@@ -16,7 +16,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      * @param Console $console
      * @return void
      */
-    protected function doExecute(InputInterface $input, Console $console)
+    public function execute(InputInterface $input, Console $console)
     {
         if($directoryName = $input->getArgument('directory')){
             if(substr($directoryName, 0, 1) == '/'){
@@ -41,7 +41,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
     protected function setCwd(Console $console, Directory $directory = null)
     {
         parent::setCwd($console, $directory);
-        $this->writeCwd($console);
+        $this->writeEmptyLine($console);
         return $this;
     }
 
@@ -136,7 +136,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
         }
 
         if($count > 1){
-            $this->writeCwd($console);
+            $this->writeEmptyLine($console);
             foreach($matches as $directory){
                 $line = new Line();
                 $line->add('d', 'tab-20');
@@ -144,5 +144,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
                 $console->writeLine($line);
             }
         }
+
+        return false;
     }
 }

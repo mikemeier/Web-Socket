@@ -13,7 +13,7 @@ class LsCommand extends AbstractUserCommand
      * @param Console $console
      * @return void
      */
-    protected function doExecute(InputInterface $input, Console $console)
+    public function execute(InputInterface $input, Console $console)
     {
         foreach(array('.', '..') as $default){
             $line = new Line();

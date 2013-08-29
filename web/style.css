@@ -1,5 +1,5 @@
 * {
-    font-family: courier;
+    font-family: monospace;
 }
 
 html, body {
@@ -51,6 +51,10 @@ html, body {
     font-size: 10pt;
     background-color: black;
     color: white;
+}
+
+#output .description {
+    color: orange;
 }
 
 #output .user {
