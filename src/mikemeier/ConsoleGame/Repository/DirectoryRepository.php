@@ -51,10 +51,9 @@ class DirectoryRepository extends EntityRepository
     /**
      * @param Directory $start
      * @param string $path
-     * @param bool $returnLastValid
-     * @return Directory
+     * @return array
      */
-    public function findDirectory(Directory $start, $path, $returnLastValid = false)
+    public function findDirectory(Directory $start, $path)
     {
         $child = $lastValid = $start;
         foreach($this->getDirectoryNames($path) as $name){
@@ -62,12 +61,15 @@ class DirectoryRepository extends EntityRepository
                 $child = $lastValid = $child->getParent();
                 continue;
             }
+            if($name == '.'){
+                continue;
+            }
             if(!$child || !$child = $child->getChild($name)){
-                return $returnLastValid ? $lastValid : null;
+                return array(null, $lastValid);
             }
             $lastValid = $child;
         }
-        return $child;
+        return array($child, $lastValid);
     }
 
     /**

@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class CdCommand extends AbstractUserCommand implements AutocompletableCommandInterface
 {
-    use UserHelperTrait;
     use DirectoryRepositoryHelperTrait;
     use EnvironmentHelperTrait;
     use RepositoryHelperTrait;
@@ -79,7 +78,8 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function change(Console $console, Directory $start, $path)
     {
-        if(!$directory = $this->getDirectoryRepository()->findDirectory($start, $path)){
+        list($directory) = $this->getDirectoryRepository()->findDirectory($start, $path);
+        if(!$directory){
             $console->write('Invalid directory "'. $path .'"', 'error');
             return;
         }
@@ -104,32 +104,39 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
     public function autocomplete($input, Console $console)
     {
         $cwd = $this->getEnvironmentHelper()->getCwd($console);
+        $directoryRepo = $this->getDirectoryRepository();
+        $names = $directoryRepo->getDirectoryNames($input);
+        $searchName = end($names);
 
         if($input){
             $matches = array();
-            foreach($this->getDirectoryRepository()->findDirectory($cwd, $input, true)->getChildren() as $child){
-                $name = $child->getName();
-                if(strtolower(substr($name, 0, strlen($input))) == strtolower($input)){
-                    $matches[] = $child;
+            list($directory, $lastValid) = $directoryRepo->findDirectory($cwd, $input);
+            if(!$directory){
+                foreach($lastValid->getChildren() as $child){
+                    $name = $child->getName();
+                    if(strtolower(substr($name, 0, strlen($searchName))) == strtolower($searchName)){
+                        $matches[] = $child;
+                    }
                 }
+            }else{
+                $matches = $directory->getChildren();
             }
         }else{
             $matches = $cwd->getChildren();
         }
 
         $count = count($matches);
+
         if($count == 1){
-            return $matches[0]->getName();
+            return implode("/", array_merge(array_slice($names, 0, -1), array($matches[0])));
         }
 
-        if($count > 1){
-            $console->writeEmptyDecoratedLine();
-            foreach($matches as $directory){
-                $line = new Line();
-                $line->add(' d ');
-                $line->add($directory->getName(), 'directory');
-                $console->writeLine($line);
-            }
+        $console->writeEmptyDecoratedLine();
+        foreach($matches as $directory){
+            $line = new Line();
+            $line->add(' d ');
+            $line->add($directory->getName(), 'directory');
+            $console->writeLine($line);
         }
 
         return false;
