@@ -48,6 +48,16 @@
                 container.show();
             }
 
+            function setIp(ip){
+                var container = $('[data-ip-container]');
+                if(!ip){
+                    container.hide();
+                    return;
+                }
+                $('[data-ip]').html(ip);
+                container.show();
+            }
+
             $(function(){
                 var Socket = new SocketConsole('ws://localhost:8080');
                 Socket.connect();
@@ -56,12 +66,14 @@
                     setUserCount(number);
                 });
 
-                Socket.on('loggedin', function(username){
+                Socket.on('loggedin', function(username, ip){
                     setUsername(username);
+                    setIp(ip);
                 });
 
                 Socket.on('loggedout', function(){
                     setUsername();
+                    setIp();
                 });
 
                 Socket.on('autocomplete', function(autocomplete){
@@ -126,6 +138,7 @@
                 <li class="status"><span class="connecting" data-status-container>Uplink: <span data-status>Connecting</span></span></li>
                 <li class="usercount" data-user-count-container style="display:none;">Online: <span data-user-count></span></li>
                 <li class="username" data-username-container style="display:none;">Username: <span data-username></span></li>
+                <li class="ip" data-ip-container style="display:none;">Ip: <span data-ip></span></li>
             </ul>
         </div>
         <ul id="output" data-output></ul>

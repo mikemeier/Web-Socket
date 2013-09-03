@@ -15,6 +15,10 @@ use mikemeier\ConsoleGame\Command\Helper\EntityManagerHelper;
 use mikemeier\ConsoleGame\Command\Helper\FeedbackHelper;
 use mikemeier\ConsoleGame\Command\Helper\RepositoryHelper;
 use mikemeier\ConsoleGame\Command\Helper\UserHelper;
+use mikemeier\ConsoleGame\Command\Helper\RouterHelper;
+use mikemeier\ConsoleGame\Network\Router;
+use mikemeier\ConsoleGame\Network\Dhcp;
+use mikemeier\ConsoleGame\Network\Ip;
 
 /** @var ClassLoader $loader */
 $loader = require __DIR__.'/../vendor/autoload.php';
@@ -29,7 +33,8 @@ $conn = array(
     'path' => __DIR__.'/../cache/db.sqlite',
 );
 
-$em = EntityManager::create($conn, $config);
+$em     = EntityManager::create($conn, $config);
+$router = new Router(new Dhcp(New Ip('192.168.1.2'), new Ip('192.168.255.255')), new Ip('192.168.1.1'));
 
 $container = new Container(array(
     'em' => $em,
@@ -37,7 +42,8 @@ $container = new Container(array(
     'decorators' => array(
         new UserDecorator(100),
         new PathDecorator(50)
-    )
+    ),
+    'router' => $router
 ));
 
 $helpers = array(
@@ -46,7 +52,8 @@ $helpers = array(
     new EntityManagerHelper($em),
     new FeedbackHelper(),
     new RepositoryHelper($em),
-    new UserHelper()
+    new UserHelper(),
+    new RouterHelper($router)
 );
 
 /**

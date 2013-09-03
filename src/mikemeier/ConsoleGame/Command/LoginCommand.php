@@ -6,8 +6,10 @@ use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\RouterHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
+use mikemeier\ConsoleGame\Network\OutOfIpsException;
 use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -20,6 +22,7 @@ class LoginCommand extends AbstractCommand
     use DirectoryRepositoryHelperTrait;
     use FeedbackHelperTrait;
     use EnvironmentHelperTrait;
+    use RouterHelperTrait;
 
     /**
      * @param InputInterface $input
@@ -39,14 +42,20 @@ class LoginCommand extends AbstractCommand
             return $this;
         }
 
-        $this->getUserHelper()->loginUser(
-            $console,
-            $user,
-            $this->getDirectoryRepository(),
-            $this->getEnvironmentHelper()->getEnvironment($console)
-        );
+        $environment = $this->getEnvironmentHelper()->getEnvironment($console);
 
-        $console->write('Hi '. $user->getUsername(), 'welcome');
+        try {
+            $this->getUserHelper()->loginUser(
+                $console,
+                $user,
+                $this->getDirectoryRepository(),
+                $environment,
+                $this->getRouterHelper()->getRouter()
+            );
+            $console->write('Welcome back '. $user->getUsername(), 'welcome');
+        }catch(OutOfIpsException $e){
+            $console->write('No more IPs from DHCP... Could not login', 'error');
+        }
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace mikemeier\ConsoleGame\Console;
 
 use mikemeier\ConsoleGame\Command\CommandInterface;
 use mikemeier\ConsoleGame\Filesystem\Directory;
+use mikemeier\ConsoleGame\Network\Ip;
 
 class Environment
 {
@@ -16,6 +17,11 @@ class Environment
      * @var Directory
      */
     protected $cwd = null;
+
+    /**
+     * @var Ip
+     */
+    protected $ip;
 
     /**
      * @return CommandInterface
@@ -50,6 +56,24 @@ class Environment
     public function setCwd(Directory $cwd = null)
     {
         $this->cwd = $cwd;
+        return $this;
+    }
+
+    /**
+     * @return Ip
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @param Ip $ip
+     * @return Environment
+     */
+    public function setIp(Ip $ip = null)
+    {
+        $this->ip = $ip;
         return $this;
     }
 }

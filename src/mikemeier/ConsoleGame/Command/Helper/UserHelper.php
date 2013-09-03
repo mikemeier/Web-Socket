@@ -5,6 +5,7 @@ namespace mikemeier\ConsoleGame\Command\Helper;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Console\Environment;
 use mikemeier\ConsoleGame\Filesystem\Directory;
+use mikemeier\ConsoleGame\Network\Router;
 use mikemeier\ConsoleGame\Repository\DirectoryRepository;
 use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
@@ -41,15 +42,30 @@ class UserHelper extends AbstractHelper
      * @param User $user
      * @param DirectoryRepository $directoryRepo
      * @param Environment $environment
+     * @param Router $router
      * @return $this
      */
-    public function loginUser(Console $console, User $user, DirectoryRepository $directoryRepo, Environment $environment)
-    {
+    public function loginUser(
+        Console $console,
+        User $user,
+        DirectoryRepository $directoryRepo,
+        Environment $environment,
+        Router $router
+    ){
+        $ip = $router->getIp();
+
+
+
         $console->getClient()
             ->setUser($user)
-            ->send(new Message('loggedin', array($user->getUsername())))
+            ->send(new Message('loggedin', array($user->getUsername(), $ip->getIp())))
         ;
-        $environment->setCwd($directoryRepo->getHomeDirectory($user->getUsername()));
+
+        $environment
+            ->setCwd($directoryRepo->getHomeDirectory($user->getUsername()))
+            ->setIp($ip)
+        ;
+
         return $this;
     }
 
