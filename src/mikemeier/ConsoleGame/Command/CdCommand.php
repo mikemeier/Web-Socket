@@ -2,17 +2,22 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
 use mikemeier\ConsoleGame\Output\Line\Line;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use mikemeier\ConsoleGame\Repository\DirectoryRepository;
-use mikemeier\ConsoleGame\Command\Helper\UserHelper;
 
 class CdCommand extends AbstractUserCommand implements AutocompletableCommandInterface
 {
+    use UserHelperTrait;
+    use DirectoryRepositoryHelperTrait;
+    use EnvironmentHelperTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console
@@ -29,21 +34,10 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
             return $this;
         }
 
-        /** @var UserHelper $userHelper */
-        $userHelper = $this->getHelper('user');
-
-        $username = $userHelper->getUser($console)->getUsername();
+        $username = $this->getUserHelper()->getUser($console)->getUsername();
         $homeDirectory = $this->getDirectoryRepository()->getHomeDirectory($username);
 
         $this->setCwd($console, $homeDirectory);
-    }
-
-    /**
-     * @return DirectoryRepository
-     */
-    protected function getDirectoryRepository()
-    {
-        return $this->getHelper('repository')->getRepository(new Directory());
     }
 
     /**
@@ -53,7 +47,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function setCwd(Console $console, Directory $directory = null)
     {
-        $this->getHelper('environment')->setCwd($console, $directory);
+        $this->getEnvironmentHelper()->setCwd($console, $directory);
         $console->writeEmptyDecoratedLine();
         return $this;
     }
@@ -73,7 +67,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function changeRelative(Console $console, $path)
     {
-        $this->change($console, $this->getHelper('environment')->getCwd($console), $path);
+        $this->change($console, $this->getEnvironmentHelper()->getCwd($console), $path);
     }
 
     /**
@@ -107,7 +101,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     public function autocomplete($input, Console $console)
     {
-        $cwd = $this->getHelper('environment')->getCwd($console);
+        $cwd = $this->getEnvironmentHelper()->getCwd($console);
 
         if($input){
             $matches = array();

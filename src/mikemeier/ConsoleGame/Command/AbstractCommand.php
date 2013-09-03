@@ -5,6 +5,7 @@ namespace mikemeier\ConsoleGame\Command;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use mikemeier\ConsoleGame\Command\Helper\HelperInterface;
+use mikemeier\ConsoleGame\Command\Helper\Traits\HelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\DependencyInjection\ContainerInterface;
 use mikemeier\ConsoleGame\Filesystem\Directory;
@@ -16,15 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 abstract class AbstractCommand implements CommandInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $helpers = array();
+    use HelperTrait;
 
     /**
      * @param array $helpers
@@ -34,26 +27,6 @@ abstract class AbstractCommand implements CommandInterface
         foreach($helpers as $helper){
             $this->addHelper($helper);
         }
-    }
-
-    /**
-     * @param HelperInterface $helper
-     * @return $this
-     */
-    protected function addHelper(HelperInterface $helper)
-    {
-        $this->helpers[strtolower($helper->getName())] = $helper;
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return HelperInterface
-     */
-    protected function getHelper($name)
-    {
-        $name = strtolower($name);
-        return isset($this->helpers[$name]) ? $this->helpers[$name] : null;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace mikemeier\ConsoleGame\Command\Helper;
 
+use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Filesystem\Directory;
 use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
@@ -9,35 +10,44 @@ use mikemeier\ConsoleGame\Server\Message\Message;
 
 class UserHelper extends AbstractHelper
 {
+    use EnvironmentHelperTrait;
+
     /**
      * @param Console $console
-     * @param EnvironmentHelper $environment
      * @return $this
      */
-    public function logoutUser(Console $console, EnvironmentHelper $environment)
+    public function logoutUser(Console $console)
     {
         $console->getClient()
             ->setUser(null)
             ->send(new Message('loggedout'))
         ;
-        $environment->setCwd($console, null);
+        $this->getEnvironmentHelper()->setCwd($console, null);
         return $this;
+    }
+
+    /**
+     * @param Console $console
+     * @return string
+     */
+    public function getUsername(Console $console)
+    {
+        return $this->getUser($console)->getUsername();
     }
 
     /**
      * @param Console $console
      * @param User $user
      * @param Directory $directory
-     * @param EnvironmentHelper $environment
      * @return $this
      */
-    public function loginUser(Console $console, User $user, Directory $directory, EnvironmentHelper $environment)
+    public function loginUser(Console $console, User $user, Directory $directory)
     {
         $console->getClient()
             ->setUser($user)
             ->send(new Message('loggedin', array($user->getUsername())))
         ;
-        $environment->setCwd($console, $directory);
+        $this->getEnvironmentHelper()->setCwd($console, $directory);
         return $this;
     }
 

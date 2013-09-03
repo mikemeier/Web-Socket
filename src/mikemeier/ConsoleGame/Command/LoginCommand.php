@@ -2,18 +2,23 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
-use mikemeier\ConsoleGame\Filesystem\Directory;
+use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Doctrine\ORM\EntityRepository;
-use mikemeier\ConsoleGame\Command\Helper\UserHelper;
-use mikemeier\ConsoleGame\Repository\DirectoryRepository;
 
 class LoginCommand extends AbstractCommand
 {
+    use UserHelperTrait;
+    use RepositoryHelperTrait;
+    use DirectoryRepositoryHelperTrait;
+    use FeedbackHelperTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console
@@ -24,8 +29,7 @@ class LoginCommand extends AbstractCommand
         $username = strtolower($input->getArgument('username'));
         $password = $input->getArgument('password');
 
-        /** @var EntityRepository $userRepo */
-        $userRepo = $this->getHelper('repository')->getRepository(new User());
+        $userRepo = $this->getRepositoryHelper()->getRepository(new User());
 
         /** @var User $user */
         if(!$user = $userRepo->findOneBy(array('username' => $username, 'password' => $password))){
@@ -33,17 +37,12 @@ class LoginCommand extends AbstractCommand
             return $this;
         }
 
-        /** @var UserHelper $userHelper */
-        $userHelper = $this->getHelper('user');
+        $directoryRepo = $this->getDirectoryRepository();
 
-        /** @var DirectoryRepository $directoryRepo */
-        $directoryRepo = $this->getHelper('repository')->getRepository(new Directory());
-
-        $userHelper->loginUser(
+        $this->getUserHelper()->loginUser(
             $console,
             $user,
-            $directoryRepo->getHomeDirectory($userHelper->getUser($console)->getUsername()),
-            $this->getHelper('environment')
+            $directoryRepo->getHomeDirectory($this->getUserHelper()->getUsername($console))
         );
 
         $console->write('Hi '. $user->getUsername(), 'welcome');
@@ -58,7 +57,7 @@ class LoginCommand extends AbstractCommand
      */
     public function getFeedback(InputInterface $input, $default = null)
     {
-        return $this->getHelper('feedback')->prepareFeedback($input, array(
+        return $this->getFeedbackHelper()->prepareFeedback($this->getInputDefinition(), $input, array(
             'password' => str_repeat('*', strlen($input->getArgument('password')))
         ));
     }

@@ -2,14 +2,18 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
-use mikemeier\ConsoleGame\Filesystem\Directory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
 class MkdirCommand extends AbstractUserCommand
 {
+    use DirectoryRepositoryHelperTrait;
+    use EnvironmentHelperTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console
@@ -20,16 +24,16 @@ class MkdirCommand extends AbstractUserCommand
         $name = $input->getArgument('name');
         if(!$sanitized = preg_replace('/[^a-zA-Z]+/', '', $name)){
             $console->write('Invalid name: '. $name, 'error');
-            return;
+            return $this;
         }
 
-        $cwd = $this->getHelper('environment')->getCwd($console);
+        $cwd = $this->getEnvironmentHelper()->getCwd($console);
         if($cwd->getChild($sanitized)){
             $console->write('Already exists: '. $sanitized, 'error');
             return $this;
         }
 
-        $this->getHelper('repository')->getRepository(new Directory())->createDirectory($cwd, $sanitized);
+        $this->getDirectoryRepository()->createDirectory($cwd, $sanitized);
         $console->write('OK', 'success');
 
         return $this;

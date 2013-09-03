@@ -2,21 +2,20 @@
 
 namespace mikemeier\ConsoleGame\Command\Helper;
 
-use mikemeier\ConsoleGame\Command\CommandInterface;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
 class FeedbackHelper extends AbstractHelper
 {
     /**
-     * @param CommandInterface $command
+     * @param InputDefinition $definition
      * @param InputInterface $input
      * @param array $argumentsReplace
      * @return string
      */
-    public function prepareFeedback(CommandInterface $command, InputInterface $input, array $argumentsReplace = array())
+    public function prepareFeedback(InputDefinition $definition, InputInterface $input, array $argumentsReplace = array())
     {
         $feedback = array($this->getName());
-        $definition = $command->getInputDefinition();
 
         foreach($definition->getOptions() as $option){
             $text = '--'.$option->getName();

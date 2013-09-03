@@ -2,8 +2,11 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\EntityManagerHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
-use mikemeier\ConsoleGame\Filesystem\Directory;
 use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,16 +16,22 @@ use Symfony\Component\Console\Input\InputOption;
 
 class RegisterCommand extends AbstractCommand
 {
+    use DirectoryRepositoryHelperTrait;
+    use RepositoryHelperTrait;
+    use EntityManagerHelperTrait;
+    use FeedbackHelperTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {
         $username = strtolower($input->getArgument('username'));
         $password = $input->getArgument('password');
 
-        $userRepo = $this->getHelper('repository')->getRepository(new User());
+        $userRepo = $this->getRepositoryHelper()->getRepository(new User());
         if($user = $userRepo->findOneBy(array('username' => $username))){
             $console->write('Username already exists', 'error');
             return $this;
@@ -32,11 +41,11 @@ class RegisterCommand extends AbstractCommand
         $user->setUsername($username);
         $user->setPassword($password);
 
-        $em = $this->getHelper('entitymanager');
+        $em = $this->getEntityManagerHelper()->getEntityManager();
         $em->persist($user);
         $em->flush();
 
-        $this->getHelper('repository')->getRepository(new Directory())->getHomeDirectory($username);
+        $this->getDirectoryRepository()->getHomeDirectory($username);
         $console->write('OK', 'success');
 
         if($input->getOption('login')){
@@ -54,7 +63,7 @@ class RegisterCommand extends AbstractCommand
      */
     public function getFeedback(InputInterface $input, $default = null)
     {
-        return $this->getHelper('feedback')->prepareFeedback($input, array(
+        return $this->getFeedbackHelper()->prepareFeedback($this->getInputDefinition(), $input, array(
             'password' => str_repeat('*', strlen($input->getArgument('password')))
         ));
     }

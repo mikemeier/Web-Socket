@@ -2,13 +2,15 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use mikemeier\ConsoleGame\Command\Helper\UserHelper;
 
 class LogoutCommand extends AbstractCommand
 {
+    use UserHelperTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console
@@ -21,7 +23,7 @@ class LogoutCommand extends AbstractCommand
             return $this;
         }
 
-        $this->getHelper('user')->logoutUser($console, $this->getHelper('environment'));
+        $this->getUserHelper()->logoutUser($console);
         $console->write('Bye', 'logout');
 
         return $this;

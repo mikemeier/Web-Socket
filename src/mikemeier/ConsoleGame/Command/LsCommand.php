@@ -2,12 +2,15 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Output\Line\Line;
 use Symfony\Component\Console\Input\InputInterface;
 
 class LsCommand extends AbstractUserCommand
 {
+    use EnvironmentHelperTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console
@@ -19,7 +22,7 @@ class LsCommand extends AbstractUserCommand
             $this->outputDirectory($console, $name);
         }
 
-        foreach($this->getHelper('environment')->getCwd($console)->getChildren() as $child){
+        foreach($this->getEnvironmentHelper()->getCwd($console)->getChildren() as $child){
             $this->outputDirectory($console, $child->getName());
         }
 

@@ -10,6 +10,6 @@ abstract class AbstractHelper implements HelperInterface
     public function getName()
     {
         $reflection = new \ReflectionClass($this);
-        return strtolower(substr($reflection->getShortName(), 0, -7));
+        return strtolower(substr($reflection->getShortName(), 0, -6));
     }
 }
