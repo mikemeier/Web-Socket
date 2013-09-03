@@ -2,6 +2,7 @@
     function Socket(url){
         this.url = url;
         this.ws = null;
+        this.reconnectTimout = 2500;
         this.reconnectInterval = null;
         this.callbacks = {};
     }
@@ -40,7 +41,7 @@
                 };
 
                 self.ws = ws;
-            }, 500);
+            }, self.reconnectTimout);
         },
 
         tryReconnect: function(){
@@ -50,7 +51,7 @@
                 this.reconnectInterval = window.setInterval(function(){
                     self.connect();
                     self.dispatch('reconnect');
-                }, 2500);
+                }, self.reconnectTimout);
             }
         },
 
