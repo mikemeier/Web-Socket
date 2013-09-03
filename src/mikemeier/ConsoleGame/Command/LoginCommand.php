@@ -3,6 +3,7 @@
 namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
@@ -18,6 +19,7 @@ class LoginCommand extends AbstractCommand
     use RepositoryHelperTrait;
     use DirectoryRepositoryHelperTrait;
     use FeedbackHelperTrait;
+    use EnvironmentHelperTrait;
 
     /**
      * @param InputInterface $input
@@ -37,12 +39,11 @@ class LoginCommand extends AbstractCommand
             return $this;
         }
 
-        $directoryRepo = $this->getDirectoryRepository();
-
         $this->getUserHelper()->loginUser(
             $console,
             $user,
-            $directoryRepo->getHomeDirectory($this->getUserHelper()->getUsername($console))
+            $this->getDirectoryRepository(),
+            $this->getEnvironmentHelper()->getEnvironment($console)
         );
 
         $console->write('Hi '. $user->getUsername(), 'welcome');

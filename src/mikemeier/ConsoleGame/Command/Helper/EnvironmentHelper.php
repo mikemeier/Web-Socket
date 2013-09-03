@@ -4,6 +4,7 @@ namespace mikemeier\ConsoleGame\Command\Helper;
 
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
+use mikemeier\ConsoleGame\Console\Environment;
 
 class EnvironmentHelper extends AbstractHelper
 {
@@ -14,7 +15,7 @@ class EnvironmentHelper extends AbstractHelper
      */
     public function setCwd(Console $console, Directory $directory = null)
     {
-        $console->getClient()->getEnvironment()->setCwd($directory);
+        $this->getEnvironment($console)->setCwd($directory);
         return $this;
     }
 
@@ -24,6 +25,15 @@ class EnvironmentHelper extends AbstractHelper
      */
     public function getCwd(Console $console)
     {
-        return $console->getClient()->getEnvironment()->getCwd();
+        return $this->getEnvironment($console)->getCwd();
+    }
+
+    /**
+     * @param Console $console
+     * @return Environment
+     */
+    public function getEnvironment(Console $console)
+    {
+        return $console->getClient()->getEnvironment();
     }
 }

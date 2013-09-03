@@ -4,6 +4,7 @@ namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -13,6 +14,7 @@ class MkdirCommand extends AbstractUserCommand
 {
     use DirectoryRepositoryHelperTrait;
     use EnvironmentHelperTrait;
+    use RepositoryHelperTrait;
 
     /**
      * @param InputInterface $input

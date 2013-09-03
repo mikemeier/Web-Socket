@@ -6,12 +6,16 @@ use mikemeier\ConsoleGame\Command\Helper\EntityManagerHelper;
 
 trait EntityManagerHelperTrait
 {
-    use HelperTrait;
-
     /**
      * @return EntityManagerHelper
      */
     public function getEntityManagerHelper(){
         return $this->getHelper('entitymanager');
     }
+
+    /**
+     * @param string $name
+     * @return object
+     */
+    abstract protected function getHelper($name);
 }

@@ -6,12 +6,16 @@ use mikemeier\ConsoleGame\Command\Helper\FeedbackHelper;
 
 trait FeedbackHelperTrait
 {
-    use HelperTrait;
-
     /**
      * @return FeedbackHelper
      */
     public function getFeedbackHelper(){
         return $this->getHelper('feedback');
     }
+
+    /**
+     * @param string $name
+     * @return object
+     */
+    abstract protected function getHelper($name);
 }

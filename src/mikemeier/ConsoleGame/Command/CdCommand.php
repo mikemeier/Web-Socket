@@ -4,6 +4,7 @@ namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
+use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
@@ -17,6 +18,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
     use UserHelperTrait;
     use DirectoryRepositoryHelperTrait;
     use EnvironmentHelperTrait;
+    use RepositoryHelperTrait;
 
     /**
      * @param InputInterface $input
@@ -116,9 +118,8 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
         }
 
         $count = count($matches);
-
         if($count == 1){
-            return $this->getName().' '.$matches[0]->getName();
+            return $matches[0]->getName();
         }
 
         if($count > 1){

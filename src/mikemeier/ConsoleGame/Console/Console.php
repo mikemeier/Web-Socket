@@ -101,10 +101,11 @@ class Console
         if(
             ($command = $this->getCommand($name)) &&
             $command instanceof AutocompletableCommandInterface &&
-            $command->isAvailable($this) &&
-            false !== ($autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this))
+            $command->isAvailable($this)
         ){
-            $this->sendAutocomplete($autocomplete);
+            if($autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)){
+                $this->sendAutocomplete($command->getName().' '.$autocomplete);
+            }
             return $this;
         }
 
@@ -126,7 +127,7 @@ class Console
         if($count > 1){
             $this->write('', null, true);
             foreach($commands as $command){
-                $this->write($command->getName(), 'description');
+                $this->write(' * '. $command->getName(), 'description');
             }
         }
 

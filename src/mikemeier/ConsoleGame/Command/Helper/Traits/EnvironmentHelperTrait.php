@@ -6,12 +6,16 @@ use mikemeier\ConsoleGame\Command\Helper\EnvironmentHelper;
 
 trait EnvironmentHelperTrait
 {
-    use HelperTrait;
-
     /**
      * @return EnvironmentHelper
      */
     public function getEnvironmentHelper(){
-        return $this->getHelper('entitymanager');
+        return $this->getHelper('environment');
     }
+
+    /**
+     * @param string $name
+     * @return object
+     */
+    abstract protected function getHelper($name);
 }
