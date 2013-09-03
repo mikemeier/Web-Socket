@@ -12,7 +12,12 @@ interface CommandInterface
     /**
      * @return string
      */
-    public function __toString();
+    public function getName();
+
+    /**
+     * @return array
+     */
+    public function getAliases();
 
     /**
      * @param Console $console
@@ -23,22 +28,9 @@ interface CommandInterface
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
-     */
-    public function execute(InputInterface $input, Console $console);
-
-    /**
-     * @param ContainerInterface $container
      * @return CommandInterface
      */
-    public function setContainer(ContainerInterface $container);
-
-    /**
-     * @param InputInterface $input
-     * @param string $default
-     * @return string
-     */
-    public function getFeedback(InputInterface $input, $default = null);
+    public function execute(InputInterface $input, Console $console);
 
     /**
      * @return InputDefinition
@@ -48,15 +40,17 @@ interface CommandInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getDescription();
 
     /**
-     * @return array
+     * @param InputInterface $input
+     * @param string $default
+     * @return string
      */
-    public function getAliases();
+    public function getFeedback(InputInterface $input, $default = null);
 
     /**
      * @return string
      */
-    public function getDescription();
+    public function __toString();
 }

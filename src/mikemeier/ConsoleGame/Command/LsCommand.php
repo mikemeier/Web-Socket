@@ -11,7 +11,7 @@ class LsCommand extends AbstractUserCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {
@@ -19,9 +19,11 @@ class LsCommand extends AbstractUserCommand
             $this->outputDirectory($console, $name);
         }
 
-        foreach($this->getCwd($console)->getChildren() as $child){
+        foreach($this->getHelper('environment')->getCwd($console)->getChildren() as $child){
             $this->outputDirectory($console, $child->getName());
         }
+
+        return $this;
     }
 
     /**

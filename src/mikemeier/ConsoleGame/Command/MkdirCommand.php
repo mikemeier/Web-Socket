@@ -3,6 +3,7 @@
 namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
+use mikemeier\ConsoleGame\Filesystem\Directory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,7 +13,7 @@ class MkdirCommand extends AbstractUserCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {
@@ -22,14 +23,16 @@ class MkdirCommand extends AbstractUserCommand
             return;
         }
 
-        $cwd = $this->getCwd($console);
+        $cwd = $this->getHelper('environment')->getCwd($console);
         if($cwd->getChild($sanitized)){
             $console->write('Already exists: '. $sanitized, 'error');
-            return;
+            return $this;
         }
 
-        $this->getDirectoryRepository()->createDirectory($cwd, $sanitized);
+        $this->getHelper('repository')->getRepository(new Directory())->createDirectory($cwd, $sanitized);
         $console->write('OK', 'success');
+
+        return $this;
     }
 
     /**

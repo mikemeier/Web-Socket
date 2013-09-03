@@ -40,6 +40,37 @@ class DirectoryRepository extends EntityRepository
     }
 
     /**
+     * @param string $path
+     * @return array
+     */
+    public function getDirectoryNames($path)
+    {
+        return array_filter(explode("/", $path));
+    }
+
+    /**
+     * @param Directory $start
+     * @param string $path
+     * @param bool $returnLastValid
+     * @return Directory
+     */
+    public function findDirectory(Directory $start, $path, $returnLastValid = false)
+    {
+        $child = $lastValid = $start;
+        foreach($this->getDirectoryNames($path) as $name){
+            if($name == '..'){
+                $child = $lastValid = $child->getParent();
+                continue;
+            }
+            if(!$child || !$child = $child->getChild($name)){
+                return $returnLastValid ? $lastValid : null;
+            }
+            $lastValid = $child;
+        }
+        return $child;
+    }
+
+    /**
      * @param Directory $parent
      * @param string $name
      * @return $this

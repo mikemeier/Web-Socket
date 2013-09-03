@@ -8,25 +8,42 @@ use mikemeier\ConsoleGame\Output\Line\Line;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use mikemeier\ConsoleGame\Repository\DirectoryRepository;
+use mikemeier\ConsoleGame\Command\Helper\UserHelper;
 
 class CdCommand extends AbstractUserCommand implements AutocompletableCommandInterface
 {
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
+     * @return AutocompletableCommandInterface
      */
     public function execute(InputInterface $input, Console $console)
     {
         if($directoryName = $input->getArgument('directory')){
             if(substr($directoryName, 0, 1) == '/'){
                 $this->changeAbsolute($console, $directoryName);
-                return;
+                return $this;
             }
             $this->changeRelative($console, $directoryName);
-        }else{
-            $this->setCwd($console, $this->getHomeDirectory($this->getUser($console)->getUsername()));
+            return $this;
         }
+
+        /** @var UserHelper $userHelper */
+        $userHelper = $this->getHelper('user');
+
+        $username = $userHelper->getUser($console)->getUsername();
+        $homeDirectory = $this->getDirectoryRepository()->getHomeDirectory($username);
+
+        $this->setCwd($console, $homeDirectory);
+    }
+
+    /**
+     * @return DirectoryRepository
+     */
+    protected function getDirectoryRepository()
+    {
+        return $this->getHelper('repository')->getRepository(new Directory());
     }
 
     /**
@@ -36,8 +53,8 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function setCwd(Console $console, Directory $directory = null)
     {
-        parent::setCwd($console, $directory);
-        $this->writeEmptyLine($console);
+        $this->getHelper('environment')->setCwd($console, $directory);
+        $console->writeEmptyDecoratedLine();
         return $this;
     }
 
@@ -47,7 +64,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function changeAbsolute(Console $console, $path)
     {
-        $this->change($console, $this->getRootDirectory(), $path);
+        $this->change($console, $this->getDirectoryRepository()->getRootDirectory(), $path);
     }
 
     /**
@@ -56,7 +73,7 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function changeRelative(Console $console, $path)
     {
-        $this->change($console, $this->getCwd($console), $path);
+        $this->change($console, $this->getHelper('environment')->getCwd($console), $path);
     }
 
     /**
@@ -66,9 +83,11 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     protected function change(Console $console, Directory $start, $path)
     {
-        if($directory = $this->findDirectory($console, $start, $path)){
-            $this->setCwd($console, $directory);
+        if(!$directory = $this->getDirectoryRepository()->findDirectory($start, $path)){
+            $console->write('Invalid directory "'. $path .'"', 'error');
+            return;
         }
+        $this->setCwd($console, $directory);
     }
 
     /**
@@ -88,11 +107,11 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
      */
     public function autocomplete($input, Console $console)
     {
-        $cwd = $this->getCwd($console);
+        $cwd = $this->getHelper('environment')->getCwd($console);
 
         if($input){
             $matches = array();
-            foreach($cwd->getChildren() as $child){
+            foreach($this->getDirectoryRepository()->findDirectory($cwd, $input, true)->getChildren() as $child){
                 $name = $child->getName();
                 if(strtolower(substr($name, 0, strlen($input))) == strtolower($input)){
                     $matches[] = $child;
@@ -103,16 +122,17 @@ class CdCommand extends AbstractUserCommand implements AutocompletableCommandInt
         }
 
         $count = count($matches);
+
         if($count == 1){
             return $this->getName().' '.$matches[0]->getName();
         }
 
         if($count > 1){
-            $this->writeEmptyLine($console);
+            $console->writeEmptyDecoratedLine();
             foreach($matches as $directory){
                 $line = new Line();
-                $line->add('d', 'tab-20');
-                $line->add($directory->getName());
+                $line->add(' d ');
+                $line->add($directory->getName(), 'directory');
                 $console->writeLine($line);
             }
         }

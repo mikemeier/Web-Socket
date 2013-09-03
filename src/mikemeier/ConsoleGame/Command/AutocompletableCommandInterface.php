@@ -9,7 +9,7 @@ interface AutocompletableCommandInterface extends CommandInterface
     /**
      * @param string $input
      * @param Console $console
-     * @return string|null
+     * @return string|bool
      */
     public function autocomplete($input, Console $console);
 }

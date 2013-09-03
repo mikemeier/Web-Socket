@@ -3,6 +3,7 @@
 namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
+use mikemeier\ConsoleGame\Filesystem\Directory;
 use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,21 +22,21 @@ class RegisterCommand extends AbstractCommand
         $username = strtolower($input->getArgument('username'));
         $password = $input->getArgument('password');
 
-        $userRepo = $this->getRepository(new User());
+        $userRepo = $this->getHelper('repository')->getRepository(new User());
         if($user = $userRepo->findOneBy(array('username' => $username))){
             $console->write('Username already exists', 'error');
-            return;
+            return $this;
         }
 
         $user = new User();
         $user->setUsername($username);
         $user->setPassword($password);
 
-        $em = $this->getEntityManager();
+        $em = $this->getHelper('entitymanager');
         $em->persist($user);
         $em->flush();
 
-        $this->getDirectoryRepository()->getHomeDirectory($username);
+        $this->getHelper('repository')->getRepository(new Directory())->getHomeDirectory($username);
         $console->write('OK', 'success');
 
         if($input->getOption('login')){
@@ -53,7 +54,7 @@ class RegisterCommand extends AbstractCommand
      */
     public function getFeedback(InputInterface $input, $default = null)
     {
-        return $this->prepareFeedback($input, array(
+        return $this->getHelper('feedback')->prepareFeedback($input, array(
             'password' => str_repeat('*', strlen($input->getArgument('password')))
         ));
     }

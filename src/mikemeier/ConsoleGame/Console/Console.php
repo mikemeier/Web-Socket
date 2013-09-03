@@ -86,12 +86,13 @@ class Console
 
     /**
      * @param string $input
+     * @return $this
      */
     public function tab($input)
     {
         if(!$input){
             $this->processCommand($this->getCommand('list'));
-            return;
+            return $this;
         }
 
         $explode = explode(" ", $input);
@@ -101,19 +102,64 @@ class Console
             ($command = $this->getCommand($name)) &&
             $command instanceof AutocompletableCommandInterface &&
             $command->isAvailable($this) &&
-            $autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)
+            false !== ($autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this))
         ){
-            $this->getClient()->send(new Message('autocomplete', array($autocomplete)));
+            $this->sendAutocomplete($autocomplete);
+            return $this;
         }
+
+        /** @var CommandInterface[] $commands */
+        $commands = array();
+
+        foreach($this->getCommands() as $cmdName => $command){
+            if($command->isAvailable($this) && strtolower(substr($cmdName, 0, strlen($name))) == strtolower($name)){
+                $commands[] = $command;
+            }
+        }
+
+        $count = count($commands);
+        if($count == 1){
+            $this->sendAutocomplete($commands[0]->getName().' ');
+            return $this;
+        }
+
+        if($count > 1){
+            $this->write('', null, true);
+            foreach($commands as $command){
+                $this->write($command->getName(), 'description');
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function writeEmptyDecoratedLine()
+    {
+        $this->write('', null, true);
+        return $this;
+    }
+
+    /**
+     * @param string $text
+     * @return $this
+     */
+    public function sendAutocomplete($text)
+    {
+        $this->getClient()->send(new Message('autocomplete', array($text)));
+        return $this;
     }
 
     /**
      * @param string $input
+     * @return $this
      */
     public function process($input)
     {
         if(!$input){
-            return;
+            return $this;
         }
 
         $explode = explode(" ", $input);
@@ -122,18 +168,22 @@ class Console
         if(!$command = $this->getCommand($name)){
             $this->writeFeedback($input);
             $this->writeCommandNotFound($name);
-            return;
+            return $this;
         }
 
         $this->processCommand($command, new StringInput(implode(" ", array_slice($explode, 1))), true, $input);
+
+        return $this;
     }
 
     /**
      * @param string $command
+     * @return $this
      */
     public function writeCommandNotFound($command)
     {
         $this->write($command .': command not found', 'error');
+        return $this;
     }
 
     /**
@@ -155,12 +205,14 @@ class Console
 
     /**
      * @param string $feedback
+     * @return $this
      */
     protected function writeFeedback($feedback)
     {
         if($feedback){
             $this->write($feedback, array('feedback'), true);
         }
+        return $this;
     }
 
     /**
@@ -168,12 +220,13 @@ class Console
      * @param InputInterface $input
      * @param bool $describeIfNotValid
      * @param string $feedback
+     * @return $this
      */
     public function processCommand(CommandInterface $command, InputInterface $input = null, $describeIfNotValid = false, $feedback = null)
     {
         if(!$command->isAvailable($this)){
             $this->writeCommandNotFound($command->getName());
-            return;
+            return $this;
         }
 
         $input = $input ?: new StringInput('');
@@ -187,14 +240,17 @@ class Console
                 $this->write('Invalid command call', 'error');
                 $this->describe($command);
             }
-            return;
+            return $this;
         }
 
         $command->execute($input, $this);
+
+        return $this;
     }
 
     /**
      * @param CommandInterface $command
+     * @return $this
      */
     public function describe(CommandInterface $command)
     {
@@ -211,7 +267,7 @@ class Console
             $this->write($line, 'description');
         }
 
-        return;
+        return $this;
     }
 
     /**

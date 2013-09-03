@@ -14,7 +14,7 @@ class CwdCommand extends AbstractUserCommand
      */
     public function execute(InputInterface $input, Console $console)
     {
-        $this->writeEmptyLine($console);
+        $console->writeEmptyDecoratedLine();
     }
 
     /**
