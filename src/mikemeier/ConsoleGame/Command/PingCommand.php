@@ -41,10 +41,9 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
         }
 
         $console->write('Ping '. $binding->getResource()->getName().' ('. $binding->getIp() .')');
-
-        $this->loop(function(){
-
-        }, 1);
+        $this->loopPeriodic($console, 1, function()use($console, $binding){
+            $this->ping($console, $binding);
+        });
 
         return $this;
     }

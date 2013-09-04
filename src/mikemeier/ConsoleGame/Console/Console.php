@@ -85,14 +85,17 @@ class Console
     }
 
     /**
+     * @param string $input
      * @return $this
      */
-    public function breakCommand()
+    public function cancel($input)
     {
-        $environment = $this->getClient()->getEnvironment();
-        if($command = $environment->getInteractiveCommand()){
-            $command->onBreak();
+        if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
+            var_dump('onCancel');
+            $command->onCancel($this, $input);
+            return $this;
         }
+
         return $this;
     }
 
@@ -102,6 +105,11 @@ class Console
      */
     public function tab($input)
     {
+        if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
+            $command->onTab($this, $input);
+            return $this;
+        }
+
         if(!$input){
             $this->processCommand($this->getCommand('list'));
             return $this;
@@ -172,7 +180,7 @@ class Console
     public function process($input)
     {
         if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
-            $command->interact($input);
+            $command->onInput($this, $input);
             return $this;
         }
 

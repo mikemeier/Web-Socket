@@ -13,9 +13,22 @@ trait InteractiveCommandTrait
     use LoopHelperTrait;
 
     /**
-     * @var bool
+     * @var array
      */
-    protected $running = true;
+    protected $loops = array();
+
+    /**
+     * @param Console $console
+     * @return $this
+     */
+    protected function stop(Console $console)
+    {
+        $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand(null);
+        while($signature = array_pop($this->loops)){
+            $this->getLoop()->cancelTimer($signature);
+        }
+        return $this;
+    }
 
     /**
      * @param Console $console
@@ -33,35 +46,36 @@ trait InteractiveCommandTrait
     }
 
     /**
-     * @return bool
+     * @param Console $console
+     * @param int $interval in seconds
+     * @param callable $callback
+     * @return string
      */
-    protected function isRunning()
+    protected function loop(Console $console, $interval, $callback)
     {
-        return $this->running;
-    }
-
-
-    protected function loop()
-    {
-
-    }
-    /**
-     * @return $this
-     */
-    public function onBreak(Console $console)
-    {
-        $this->stop($console);
-        return $this;
+        return $this->loops[] = $this->getLoop()->addTimer($interval, $callback);
     }
 
     /**
      * @param Console $console
+     * @param int $interval in seconds
+     * @param callable $callback
+     * @return string
+     */
+    protected function loopPeriodic(Console $console, $interval, $callback)
+    {
+        $this->setInteractive($console);
+        return $this->loops[] = $this->getLoop()->addPeriodicTimer($interval, $callback);
+    }
+
+    /**
+     * @param Console $console
+     * @param string $input
      * @return $this
      */
-    public function stop(Console $console)
+    public function onCancel(Console $console, $input)
     {
-        $this->running = false;
-        $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand(null);
+        $this->stop($console);
         return $this;
     }
 
@@ -70,7 +84,17 @@ trait InteractiveCommandTrait
      * @param string $input
      * @return $this
      */
-    public function interact(Console $console, $input)
+    public function onInput(Console $console, $input)
+    {
+        return $this;
+    }
+
+    /**
+     * @param Console $console
+     * @param string $input
+     * @return $this
+     */
+    public function onTab(Console $console, $input)
     {
         return $this;
     }

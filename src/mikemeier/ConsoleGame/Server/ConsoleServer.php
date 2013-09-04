@@ -110,9 +110,9 @@ class ConsoleServer implements MessageComponentInterface
                     $client->getConsole()->tab(trim($data['arguments'][0]));
                 }
                 break;
-            case 'break':
-                if($client = $this->pool->getClient($connection)){
-                    $client->getConsole()->breakCommand();
+            case 'cancel':
+                if(isset($data['arguments'][0]) && $client = $this->pool->getClient($connection)){
+                    $client->getConsole()->cancel(trim($data['arguments'][0]));
                 }
                 break;
         }

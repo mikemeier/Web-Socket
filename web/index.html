@@ -133,9 +133,12 @@
                         elem.val('');
                     }
 
+                    // Cancel
                     if(lastKeyCode == 17 && e.which == 67 && (new Date() - lastKeyCodeTime <= 500)){
                         e.preventDefault();
-                        Socket.send('break');
+                        var elem = $(this);
+                        var value = elem.val();
+                        Socket.send('cancel', [value]);
                     }
 
                     lastKeyCode = e.which;

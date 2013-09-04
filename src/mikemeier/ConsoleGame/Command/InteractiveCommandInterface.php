@@ -2,21 +2,28 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Console\Console;
+
 interface InteractiveCommandInterface extends CommandInterface
 {
     /**
-     * @return InteractiveCommandInterface
-     */
-    public function stop();
-
-    /**
+     * @param Console $console
      * @param string $input
      * @return InteractiveCommandInterface
      */
-    public function interact($input);
+    public function onInput(Console $console, $input);
 
     /**
+     * @param Console $console
+     * @param string $input
      * @return InteractiveCommandInterface
      */
-    public function onBreak();
+    public function onCancel(Console $console, $input);
+
+    /**
+     * @param Console $console
+     * @param string $input
+     * @return InteractiveCommandInterface
+     */
+    public function onTab(Console $console, $input);
 }
