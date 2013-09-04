@@ -276,20 +276,16 @@ class Console
         }
 
         $input = $input ?: new StringInput('');
-        $definition = $command->getInputDefinition();
-        $feedback = $command->getFeedback($input, $feedback);
 
         try {
-            if($definition instanceof InputDefinition){
-                $input->bind($definition);
-                $input->validate();
-            }
-            if(false !== $feedback){
+            $input->bind($command->getInputDefinition());
+            $input->validate();
+            if(false !== $feedback = $command->getFeedback($input, $feedback)){
                 $this->writeFeedback($feedback);
             }
         }catch(\Exception $e){
             if($describeIfNotValid == true){
-                if(false !== $feedback){
+                if(false !== $feedback = $command->getFeedback($input, $feedback)){
                     $this->writeFeedback($feedback);
                 }
                 $this->write('Invalid command call', 'error');
