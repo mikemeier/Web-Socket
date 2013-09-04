@@ -42,7 +42,7 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
         }
 
         $count = $input->getOption('count') ? (int)$input->getOption('count') : false;
-        $console->write('Ping '. $binding->getResource()->getName().' ('. $binding->getIp() .')');
+        $console->write('Ping '. $binding->getResource()->getResourceName().' ('. $binding->getIp() .')');
         $this->loopPeriodic($console, 1, function()use($console, $binding, &$count){
             $this->ping($console, $binding);
             if($count !== false && --$count <= 0){

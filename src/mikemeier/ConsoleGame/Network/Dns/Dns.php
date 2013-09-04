@@ -19,7 +19,7 @@ class Dns
     public function getBindingByName($name)
     {
         foreach($this->bindings as $binding){
-            if($binding->getResource()->getName() == $name){
+            if($binding->getResource()->getResourceName() == $name){
                 return $binding;
             }
         }
@@ -58,7 +58,7 @@ class Dns
     public function removeBindingByResourceName($name)
     {
         foreach($this->bindings as $key => $binding){
-            if($binding->getResource()->getName() == $name){
+            if($binding->getResource()->getResourceName() == $name){
                 unset($this->bindings[$key]);
             }
         }

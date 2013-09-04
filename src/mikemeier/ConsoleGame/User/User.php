@@ -4,16 +4,14 @@ namespace mikemeier\ConsoleGame\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
 use Doctrine\Common\Collections\Collection;
-use mikemeier\ConsoleGame\Network\ResourceInterface;
 
 /**
  * @ORM\Entity(repositoryClass="mikemeier\ConsoleGame\Repository\UserRepository")
  * @ORM\Table(name="user")
  */
-class User implements ResourceInterface
+class User
 {
     /**
      * @var int
@@ -44,6 +42,14 @@ class User implements ResourceInterface
     public function __construct()
     {
         $this->directories = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getUsername();
     }
 
     /**
@@ -126,13 +132,5 @@ class User implements ResourceInterface
     {
         $this->password = $password;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->getUsername();
     }
 }

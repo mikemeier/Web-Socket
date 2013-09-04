@@ -7,5 +7,5 @@ interface ResourceInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getResourceName();
 }

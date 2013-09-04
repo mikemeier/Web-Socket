@@ -3,12 +3,13 @@
 namespace mikemeier\ConsoleGame\Server\Client;
 
 use mikemeier\ConsoleGame\Console\Environment;
+use mikemeier\ConsoleGame\Network\ResourceInterface;
 use mikemeier\ConsoleGame\Server\Message\Message;
 use Ratchet\ConnectionInterface;
 use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
 
-class Client
+class Client implements ResourceInterface
 {
     /**
      * @var ConnectionInterface
@@ -100,5 +101,16 @@ class Client
     {
         $this->console = $console;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResourceName()
+    {
+        if($user = $this->getUser()){
+            return (string)$user;
+        }
+        return null;
     }
 }
