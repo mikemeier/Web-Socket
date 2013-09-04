@@ -3,7 +3,7 @@
 namespace mikemeier\ConsoleGame\Console;
 
 use mikemeier\ConsoleGame\Filesystem\Directory;
-use mikemeier\ConsoleGame\Network\Ip;
+use mikemeier\ConsoleGame\Network\Ip\Ip;
 use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 
 class Environment
@@ -24,11 +24,46 @@ class Environment
     protected $ip;
 
     /**
+     * @var array
+     */
+    protected $data = array();
+
+    /**
      * @return Directory
      */
     public function getCwd()
     {
         return $this->cwd;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getData($key, $default = null)
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : $default;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setData($key, $value)
+    {
+        $this->data[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearData()
+    {
+        $this->data = array();
+        return $this;
     }
 
     /**

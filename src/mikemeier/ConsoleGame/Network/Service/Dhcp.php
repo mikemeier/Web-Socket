@@ -1,6 +1,9 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Network;
+namespace mikemeier\ConsoleGame\Network\Service;
+
+use mikemeier\ConsoleGame\Network\Exception\OutOfIpsException;
+use mikemeier\ConsoleGame\Network\Ip\Ip;
 
 class Dhcp
 {

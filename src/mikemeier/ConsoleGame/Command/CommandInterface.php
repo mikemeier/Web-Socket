@@ -3,7 +3,6 @@
 namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Console\Console;
-use mikemeier\ConsoleGame\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -31,13 +30,6 @@ interface CommandInterface
      * @return CommandInterface
      */
     public function execute(InputInterface $input, Console $console);
-
-    /**
-     * @param string $input
-     * @param Console $console
-     * @return CommandInterface
-     */
-    public function executeRaw($input, Console $console);
 
     /**
      * @return InputDefinition

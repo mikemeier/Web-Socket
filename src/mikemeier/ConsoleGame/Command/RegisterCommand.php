@@ -54,6 +54,8 @@ class RegisterCommand extends AbstractCommand
                 'password' => $password
             )));
         }
+
+        return $this;
     }
 
     /**

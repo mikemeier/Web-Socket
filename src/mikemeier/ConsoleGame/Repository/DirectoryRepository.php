@@ -4,7 +4,6 @@ namespace mikemeier\ConsoleGame\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use mikemeier\ConsoleGame\Filesystem\Directory;
-use mikemeier\ConsoleGame\User\User;
 
 class DirectoryRepository extends EntityRepository
 {

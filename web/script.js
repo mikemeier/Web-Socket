@@ -35,8 +35,12 @@
             };
 
             ws.onmessage = function(e){
-                var data = JSON.parse(e.data);
-                self.dispatch(data.event, data.arguments);
+                try {
+                    var data = JSON.parse(e.data);
+                    self.dispatch(data.event, data.arguments);
+                }catch(e){
+
+                }
             };
 
             self.ws = ws;

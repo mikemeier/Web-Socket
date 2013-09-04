@@ -41,6 +41,8 @@ class CdCommand extends AbstractCommand implements AutocompletableCommandInterfa
         $homeDirectory = $this->getDirectoryRepository()->getHomeDirectory($username);
 
         $this->setCwd($console, $homeDirectory);
+
+        return $this;
     }
 
     /**
@@ -112,6 +114,8 @@ class CdCommand extends AbstractCommand implements AutocompletableCommandInterfa
 
         if($input){
             $matches = array();
+            /** @var Directory $directory */
+            /** @var Directory $lastValid */
             list($directory, $lastValid) = $directoryRepo->findDirectory($cwd, $input);
             if(!$directory){
                 foreach($lastValid->getChildren() as $child){

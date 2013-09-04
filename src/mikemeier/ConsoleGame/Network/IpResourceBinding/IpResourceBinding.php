@@ -1,11 +1,11 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Network\Dns;
+namespace mikemeier\ConsoleGame\Network\IpResourceBinding;
 
-use mikemeier\ConsoleGame\Network\ResourceInterface;
-use mikemeier\ConsoleGame\Network\Ip;
+use mikemeier\ConsoleGame\Network\Resource\ResourceInterface;
+use mikemeier\ConsoleGame\Network\Ip\Ip;
 
-class DnsBinding
+class IpResourceBinding
 {
     /**
      * @var ResourceInterface

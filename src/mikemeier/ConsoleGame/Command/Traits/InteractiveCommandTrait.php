@@ -4,6 +4,7 @@ namespace mikemeier\ConsoleGame\Command\Traits;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\LoopHelperTrait;
+use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 use mikemeier\ConsoleGame\Console\Console;
 use React\EventLoop\LoopInterface;
 
@@ -23,18 +24,50 @@ trait InteractiveCommandTrait
      */
     public function stop(Console $console)
     {
-        $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand(null);
+        $this->getEnvironmentHelper()->getEnvironment($console)
+            ->setInteractiveCommand(null)
+            ->clearData()
+        ;
+
         while($signature = array_pop($this->loops)){
             $this->getLoop()->cancelTimer($signature);
         }
+
         return $this;
     }
 
     /**
      * @param Console $console
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    protected function setEnvironmentData(Console $console, $key, $value)
+    {
+        $this->getEnvironmentHelper()->getEnvironment($console)->setData($key, $value);
+        return $this;
+    }
+
+    /**
+     * @param Console $console
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function getEnvironmentData(Console $console, $key, $default = null)
+    {
+        return $this->getEnvironmentHelper()->getEnvironment($console)->getData($key, $default);
+    }
+
+    /**
+     * @param Console $console
+     * @throws \Exception
      */
     protected function setInteractive(Console $console)
     {
+        if(!$this instanceof InteractiveCommandInterface){
+            throw new \Exception("Command has to implement InteractiveCommandInterface");
+        }
         $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand($this);
     }
 

@@ -2,19 +2,20 @@
 
 namespace mikemeier\ConsoleGame\Network\Dns;
 
-use mikemeier\ConsoleGame\Network\ResourceInterface;
-use mikemeier\ConsoleGame\Network\Ip;
+use mikemeier\ConsoleGame\Network\Ip\Ip;
+use mikemeier\ConsoleGame\Network\IpResourceBinding\IpDnsResourceBinding;
+use mikemeier\ConsoleGame\Network\Resource\DnsResourceInterface;
 
 class Dns
 {
     /**
-     * @var DnsBinding[]
+     * @var IpDnsResourceBinding[]
      */
     protected $bindings = array();
 
     /**
      * @param string $name
-     * @return DnsBinding
+     * @return IpDnsResourceBinding
      */
     public function getBindingByName($name)
     {
@@ -28,7 +29,7 @@ class Dns
 
     /**
      * @param string $ip
-     * @return DnsBinding
+     * @return IpDnsResourceBinding
      */
     public function getBindingByIp($ip)
     {
@@ -41,13 +42,13 @@ class Dns
     }
 
     /**
-     * @param ResourceInterface $resource
+     * @param DnsResourceInterface $resource
      * @param Ip $ip
      * @return bool
      */
-    public function addBinding(ResourceInterface $resource, Ip $ip)
+    public function addBinding(DnsResourceInterface $resource, Ip $ip)
     {
-        $this->bindings[] = new DnsBinding($resource, $ip);
+        $this->bindings[] = new IpDnsResourceBinding($resource, $ip);
         return $this;
     }
 

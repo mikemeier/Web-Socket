@@ -2,7 +2,7 @@
 
 namespace mikemeier\ConsoleGame\Command\Helper;
 
-use mikemeier\ConsoleGame\Network\Router;
+use mikemeier\ConsoleGame\Network\Service\Router;
 
 class RouterHelper extends AbstractHelper
 {

@@ -4,8 +4,7 @@ namespace mikemeier\ConsoleGame\Command\Helper;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Console\Environment;
-use mikemeier\ConsoleGame\Filesystem\Directory;
-use mikemeier\ConsoleGame\Network\Router;
+use mikemeier\ConsoleGame\Network\Service\Router;
 use mikemeier\ConsoleGame\Repository\DirectoryRepository;
 use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;

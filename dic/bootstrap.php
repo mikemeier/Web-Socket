@@ -16,8 +16,8 @@ use mikemeier\ConsoleGame\Command\Helper\FeedbackHelper;
 use mikemeier\ConsoleGame\Command\Helper\RepositoryHelper;
 use mikemeier\ConsoleGame\Command\Helper\UserHelper;
 use mikemeier\ConsoleGame\Command\Helper\RouterHelper;
-use mikemeier\ConsoleGame\Network\Router;
-use mikemeier\ConsoleGame\Network\Dhcp;
+use mikemeier\ConsoleGame\Network\Service\Router;
+use mikemeier\ConsoleGame\Network\Service\Dhcp;
 use mikemeier\ConsoleGame\Network\Dns\Dns;
 use mikemeier\ConsoleGame\Command\Helper\LoopHelper;
 

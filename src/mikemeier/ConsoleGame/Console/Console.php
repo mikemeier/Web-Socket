@@ -11,6 +11,7 @@ use mikemeier\ConsoleGame\Output\Line\LineFormatter;
 use mikemeier\ConsoleGame\Server\Client\Client;
 use mikemeier\ConsoleGame\Server\Message\Message;
 use Symfony\Component\Console\Descriptor\TextDescriptor;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -218,11 +219,6 @@ class Console
             return $this;
         }
 
-        if(!$definition = $command->getInputDefinition()){
-            $command->executeRaw($inputWithoutName, $this);
-            return $this;
-        }
-
         $this->processCommand($command, new StringInput($inputWithoutName), true, $input);
 
         return $this;
@@ -280,16 +276,20 @@ class Console
         }
 
         $input = $input ?: new StringInput('');
+        $definition = $command->getInputDefinition();
+        $feedback = $command->getFeedback($input, $feedback);
 
         try {
-            $input->bind($command->getInputDefinition());
-            $input->validate();
-            if(false !== $feedback = $command->getFeedback($input, $feedback)){
+            if($definition instanceof InputDefinition){
+                $input->bind($definition);
+                $input->validate();
+            }
+            if(false !== $feedback){
                 $this->writeFeedback($feedback);
             }
         }catch(\Exception $e){
             if($describeIfNotValid == true){
-                if(false !== $feedback = $command->getFeedback($input, $feedback)){
+                if(false !== $feedback){
                     $this->writeFeedback($feedback);
                 }
                 $this->write('Invalid command call', 'error');

@@ -3,7 +3,6 @@
 namespace mikemeier\ConsoleGame\Command\Helper;
 
 use mikemeier\ConsoleGame\Command\CommandInterface;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
 class FeedbackHelper extends AbstractHelper

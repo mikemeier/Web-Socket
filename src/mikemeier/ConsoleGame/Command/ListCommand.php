@@ -16,8 +16,6 @@ class ListCommand extends AbstractCommand
      */
     public function execute(InputInterface $input, Console $console)
     {
-        $console->writeEmptyDecoratedLine();
-
         /** @var CommandInterface $command */
         foreach(array_unique($console->getCommands()) as $command){
             if(!$command->isAvailable($console)){

@@ -3,13 +3,13 @@
 namespace mikemeier\ConsoleGame\Server\Client;
 
 use mikemeier\ConsoleGame\Console\Environment;
-use mikemeier\ConsoleGame\Network\ResourceInterface;
+use mikemeier\ConsoleGame\Network\Resource\DnsResourceInterface;
 use mikemeier\ConsoleGame\Server\Message\Message;
 use Ratchet\ConnectionInterface;
 use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
 
-class Client implements ResourceInterface
+class Client implements DnsResourceInterface
 {
     /**
      * @var ConnectionInterface
@@ -112,5 +112,18 @@ class Client implements ResourceInterface
             return (string)$user;
         }
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function isOnline()
+    {
+        try {
+            $this->connection->send('ping');
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
     }
 }

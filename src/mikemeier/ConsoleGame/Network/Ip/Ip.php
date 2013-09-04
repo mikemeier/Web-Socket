@@ -1,6 +1,6 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Network;
+namespace mikemeier\ConsoleGame\Network\Ip;
 
 class Ip
 {

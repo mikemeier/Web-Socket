@@ -9,7 +9,7 @@ use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RouterHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
-use mikemeier\ConsoleGame\Network\OutOfIpsException;
+use mikemeier\ConsoleGame\Network\Exception\OutOfIpsException;
 use mikemeier\ConsoleGame\User\User;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
