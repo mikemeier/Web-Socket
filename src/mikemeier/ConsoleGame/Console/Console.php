@@ -284,12 +284,12 @@ class Console
         try {
             $input->bind($command->getInputDefinition());
             $input->validate();
-            if(false !== $command->getFeedback($input, $feedback)){
+            if(false !== $feedback = $command->getFeedback($input, $feedback)){
                 $this->writeFeedback($feedback);
             }
         }catch(\Exception $e){
             if($describeIfNotValid == true){
-                if(false !== $command->getFeedback($input, $feedback)){
+                if(false !== $feedback = $command->getFeedback($input, $feedback)){
                     $this->writeFeedback($feedback);
                 }
                 $this->write('Invalid command call', 'error');

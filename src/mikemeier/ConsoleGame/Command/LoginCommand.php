@@ -31,6 +31,11 @@ class LoginCommand extends AbstractCommand
      */
     public function execute(InputInterface $input, Console $console)
     {
+        if($this->getUserHelper()->hasUser($console)){
+            $console->write('Already loggedin', 'error');
+            return $this;
+        }
+
         $username = strtolower($input->getArgument('username'));
         $password = $input->getArgument('password');
 
