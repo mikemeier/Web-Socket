@@ -134,6 +134,7 @@ class CdCommand extends AbstractCommand implements AutocompletableCommandInterfa
         }
 
         $console->writeEmptyDecoratedLine();
+
         foreach($matches as $directory){
             $line = new Line();
             $line->add(' d ');

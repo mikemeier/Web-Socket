@@ -123,7 +123,7 @@ class Console
             $command instanceof AutocompletableCommandInterface &&
             $command->isAvailable($this)
         ){
-            if($autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)){
+            if(false !== $autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)){
                 $this->sendAutocomplete($command->getName().' '.$autocomplete);
             }
             return $this;
@@ -235,9 +235,7 @@ class Console
      */
     protected function writeFeedback($feedback)
     {
-        if($feedback){
-            $this->write($feedback, array('feedback'), true);
-        }
+        $this->write($feedback, array('feedback'), true);
         return $this;
     }
 
@@ -259,10 +257,14 @@ class Console
         try {
             $input->bind($command->getInputDefinition());
             $input->validate();
-            $this->writeFeedback($command->getFeedback($input, $feedback));
+            if(false !== $command->getFeedback($input, $feedback)){
+                $this->writeFeedback($feedback);
+            }
         }catch(\Exception $e){
             if($describeIfNotValid == true){
-                $this->writeFeedback($command->getFeedback($input, $feedback));
+                if(false !== $command->getFeedback($input, $feedback)){
+                    $this->writeFeedback($feedback);
+                }
                 $this->write('Invalid command call', 'error');
                 $this->describe($command);
             }
