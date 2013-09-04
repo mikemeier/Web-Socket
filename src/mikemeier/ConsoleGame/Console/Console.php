@@ -91,7 +91,6 @@ class Console
     public function cancel($input)
     {
         if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
-            var_dump('onCancel');
             $command->onCancel($this, $input);
             return $this;
         }

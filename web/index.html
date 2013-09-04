@@ -91,6 +91,7 @@
 
                 Socket.on('open', function(){
                     setStatus('Connected');
+                    $('[data-input]').prop('disabled', false).focus();
                 });
 
                 Socket.on('reconnect', function(){
@@ -102,6 +103,7 @@
                     setUserCount();
                     setUsername();
                     setIp();
+                    $('[data-input]').prop('disabled', 'disabled');
                 });
 
                 Socket.on('close', function(){
@@ -109,13 +111,14 @@
                     setUserCount();
                     setUsername();
                     setIp();
+                    $('[data-input]').prop('disabled', 'disabled');
                 });
 
                 $(document).click(function(){
                     $('[data-input]').focus();
                 });
 
-                $('[data-input]').focus().keydown(function(e){
+                $('[data-input]').keydown(function(e){
                     // Tab
                     if(e.which == 9){
                         e.preventDefault();
@@ -157,6 +160,6 @@
             </ul>
         </div>
         <ul id="output" data-output></ul>
-        <input id="input" type="text" value="" data-input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input disabled="disabled" id="input" type="text" value="" data-input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </body>
 </html>

@@ -78,7 +78,7 @@ class ConsoleServer implements MessageComponentInterface
      */
     public function onError(ConnectionInterface $connection, \Exception $exception)
     {
-        var_dump($exception->getMessage());
+        var_dump($exception);
         if($client = $this->getClient($connection)){
             $this->pool->removeClient($client);
         }

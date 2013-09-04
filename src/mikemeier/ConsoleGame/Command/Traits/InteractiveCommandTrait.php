@@ -76,6 +76,7 @@ trait InteractiveCommandTrait
     public function onCancel(Console $console, $input)
     {
         $this->stop($console);
+        $console->writeEmptyDecoratedLine();
         return $this;
     }
 
