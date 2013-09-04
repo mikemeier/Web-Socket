@@ -20,18 +20,23 @@ class Dhcp
     protected $lastIp;
 
     /**
-     * @param Ip $start
-     * @param Ip $end
+     * @var Ip[]
      */
-    public function __construct(Ip $start, Ip $end)
+    protected $ips;
+
+    /**
+     * @param string $start
+     * @param string $end
+     */
+    public function __construct($start, $end)
     {
-        $this->start = ip2long($start->getIp());
-        $this->end = ip2long($end->getIp());
+        $this->start = ip2long($start);
+        $this->end = ip2long($end);
     }
 
     /**
-     * @return Ip
      * @throws OutOfIpsException
+     * @return Ip
      */
     public function getNewIp()
     {
@@ -40,6 +45,14 @@ class Dhcp
             throw new OutOfIpsException();
         }
         $this->lastIp = $newIp;
-        return new Ip(long2ip($newIp));
+        return $this->ips[] = new Ip(long2ip($newIp));
+    }
+
+    /**
+     * @return Ip[]
+     */
+    public function getIps()
+    {
+        return $this->ips;
     }
 }

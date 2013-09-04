@@ -4,14 +4,16 @@ namespace mikemeier\ConsoleGame\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
 use Doctrine\Common\Collections\Collection;
+use mikemeier\ConsoleGame\Network\ResourceInterface;
 
 /**
  * @ORM\Entity(repositoryClass="mikemeier\ConsoleGame\Repository\UserRepository")
  * @ORM\Table(name="user")
  */
-class User
+class User implements ResourceInterface
 {
     /**
      * @var int
@@ -124,5 +126,13 @@ class User
     {
         $this->password = $password;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getUsername();
     }
 }

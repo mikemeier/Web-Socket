@@ -18,7 +18,8 @@ use mikemeier\ConsoleGame\Command\Helper\UserHelper;
 use mikemeier\ConsoleGame\Command\Helper\RouterHelper;
 use mikemeier\ConsoleGame\Network\Router;
 use mikemeier\ConsoleGame\Network\Dhcp;
-use mikemeier\ConsoleGame\Network\Ip;
+use mikemeier\ConsoleGame\Network\Dns\Dns;
+use mikemeier\ConsoleGame\Command\Helper\LoopHelper;
 
 /** @var ClassLoader $loader */
 $loader = require __DIR__.'/../vendor/autoload.php';
@@ -33,8 +34,12 @@ $conn = array(
     'path' => __DIR__.'/../cache/db.sqlite',
 );
 
-$em     = EntityManager::create($conn, $config);
-$router = new Router(new Dhcp(New Ip('192.168.1.2'), new Ip('192.168.255.255')), new Ip('192.168.1.1'));
+$em = EntityManager::create($conn, $config);
+
+$lanDhcp = new Dhcp('10.0.0.0', '10.255.255.255');
+$wanDhcp = new Dhcp('213.150.0.0', '220.255.255.255');
+
+$router = new Router($lanDhcp, new Dns());
 
 $container = new Container(array(
     'em' => $em,
@@ -42,8 +47,7 @@ $container = new Container(array(
     'decorators' => array(
         new UserDecorator(100),
         new PathDecorator(50)
-    ),
-    'router' => $router
+    )
 ));
 
 $helpers = array(
@@ -53,7 +57,10 @@ $helpers = array(
     new FeedbackHelper(),
     new RepositoryHelper($em),
     new UserHelper(),
-    new RouterHelper($router)
+    new RouterHelper($router),
+    new LoopHelper(function()use($container){
+        return $container->get('loop');
+    })
 );
 
 /**
@@ -71,7 +78,7 @@ foreach($finder as $file){
     }
     $r = new \ReflectionClass($ns.'\\'.$file->getBasename('.php'));
     if($r->implementsInterface('mikemeier\\ConsoleGame\\Command\\CommandInterface') && $r->isInstantiable()){
-        $commands[] = $r->newInstance($helpers);
+        $commands[] = $r->newInstance()->setHelpers($helpers);
     }
 }
 

@@ -12,16 +12,6 @@ abstract class AbstractCommand implements CommandInterface
     use HelperTrait;
 
     /**
-     * @param array $helpers
-     */
-    public function __construct(array $helpers = array())
-    {
-        foreach($helpers as $helper){
-            $this->addHelper($helper);
-        }
-    }
-
-    /**
      * @param Console $console
      * @return bool
      */

@@ -3,13 +3,15 @@
 namespace mikemeier\ConsoleGame\Command;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
+use mikemeier\ConsoleGame\Command\Traits\UserCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Output\Line\Line;
 use Symfony\Component\Console\Input\InputInterface;
 
-class LsCommand extends AbstractUserCommand
+class LsCommand extends AbstractCommand
 {
     use EnvironmentHelperTrait;
+    use UserCommandTrait;
 
     /**
      * @param InputInterface $input

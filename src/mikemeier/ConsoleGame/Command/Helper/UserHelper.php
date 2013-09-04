@@ -52,9 +52,7 @@ class UserHelper extends AbstractHelper
         Environment $environment,
         Router $router
     ){
-        $ip = $router->getIp();
-
-
+        $ip = $router->getNewIp($user);
 
         $console->getClient()
             ->setUser($user)

@@ -21,9 +21,10 @@ if(isset($argv[1]) && $argv[1] == "--drop"){
 }
 $tool->updateSchema($em->getMetadataFactory()->getAllMetadata());
 
-$pool       = new ClientPool();
-$server     = new ConsoleServer($pool, $dic->get('commands'), $dic->get('decorators'));
+$server     = new ConsoleServer(new ClientPool(), $dic->get('commands'), $dic->get('decorators'));
 $wsServer   = new WsServer($server);
 $ioServer   = IoServer::factory($wsServer, 8080);
+
+$dic->set('loop', $ioServer->loop);
 
 $ioServer->run();

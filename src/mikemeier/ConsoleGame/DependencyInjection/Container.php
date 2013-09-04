@@ -21,11 +21,13 @@ class Container implements ContainerInterface
 
     /**
      * @param string $id
-     * @param mixed $service
+     * @param object $service
+     * @return ContainerInterface
      */
     public function set($id, $service)
     {
         $this->services[$id] = $service;
+        return $this;
     }
 
     /**

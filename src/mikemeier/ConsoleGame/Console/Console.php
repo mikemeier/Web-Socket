@@ -85,6 +85,18 @@ class Console
     }
 
     /**
+     * @return $this
+     */
+    public function breakCommand()
+    {
+        $environment = $this->getClient()->getEnvironment();
+        if($command = $environment->getInteractiveCommand()){
+            $command->onBreak();
+        }
+        return $this;
+    }
+
+    /**
      * @param string $input
      * @return $this
      */
@@ -159,6 +171,11 @@ class Console
      */
     public function process($input)
     {
+        if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
+            $command->interact($input);
+            return $this;
+        }
+
         if(!$input){
             return $this;
         }

@@ -2,16 +2,16 @@
 
 namespace mikemeier\ConsoleGame\Console;
 
-use mikemeier\ConsoleGame\Command\CommandInterface;
 use mikemeier\ConsoleGame\Filesystem\Directory;
 use mikemeier\ConsoleGame\Network\Ip;
+use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 
 class Environment
 {
     /**
-     * @var CommandInterface
+     * @var InteractiveCommandInterface
      */
-    protected $pendingCommand = null;
+    protected $interactiveCommand = null;
 
     /**
      * @var Directory
@@ -22,24 +22,6 @@ class Environment
      * @var Ip
      */
     protected $ip;
-
-    /**
-     * @return CommandInterface
-     */
-    public function getPendingCommand()
-    {
-        return $this->pendingCommand;
-    }
-
-    /**
-     * @param CommandInterface $pendingCommand
-     * @return Environment
-     */
-    public function setPendingCommand(CommandInterface $pendingCommand)
-    {
-        $this->pendingCommand = $pendingCommand;
-        return $this;
-    }
 
     /**
      * @return Directory
@@ -74,6 +56,24 @@ class Environment
     public function setIp(Ip $ip = null)
     {
         $this->ip = $ip;
+        return $this;
+    }
+
+    /**
+     * @return InteractiveCommandInterface
+     */
+    public function getInteractiveCommand()
+    {
+        return $this->interactiveCommand;
+    }
+
+    /**
+     * @param InteractiveCommandInterface $interactiveCommand
+     * @return Environment
+     */
+    public function setInteractiveCommand($interactiveCommand)
+    {
+        $this->interactiveCommand = $interactiveCommand;
         return $this;
     }
 }

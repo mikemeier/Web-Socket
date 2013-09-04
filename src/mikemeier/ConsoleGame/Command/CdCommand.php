@@ -6,6 +6,7 @@ use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
+use mikemeier\ConsoleGame\Command\Traits\UserCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Filesystem\Directory;
 use mikemeier\ConsoleGame\Output\Line\Line;
@@ -13,11 +14,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
-class CdCommand extends AbstractUserCommand implements AutocompletableCommandInterface
+class CdCommand extends AbstractCommand implements AutocompletableCommandInterface
 {
     use DirectoryRepositoryHelperTrait;
     use EnvironmentHelperTrait;
     use RepositoryHelperTrait;
+    use UserCommandTrait;
 
     /**
      * @param InputInterface $input

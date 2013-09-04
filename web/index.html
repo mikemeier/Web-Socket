@@ -59,6 +59,9 @@
             }
 
             $(function(){
+                var lastKeyCode = null;
+                var lastKeyCodeTime = null;
+
                 var Socket = new SocketConsole('ws://localhost:8080');
                 Socket.connect();
 
@@ -96,38 +99,47 @@
 
                 Socket.on('error', function(){
                     setStatus('Error');
+                    setUserCount();
                     setUsername();
+                    setIp();
                 });
 
                 Socket.on('close', function(){
                     setStatus('Offline');
                     setUserCount();
                     setUsername();
+                    setIp();
                 });
 
-                $(function(){
-                    $(document).click(function(){
-                        $('[data-input]').focus();
-                    });
+                $(document).click(function(){
+                    $('[data-input]').focus();
+                });
 
-                    $('[data-input]').focus().keydown(function(e){
-                        // Tab
-                        if(e.which == 9){
-                            e.preventDefault();
-                            var elem = $(this);
-                            var value = elem.val();
-                            Socket.send('tab', [value]);
-                        }
+                $('[data-input]').focus().keydown(function(e){
+                    // Tab
+                    if(e.which == 9){
+                        e.preventDefault();
+                        var elem = $(this);
+                        var value = elem.val();
+                        Socket.send('tab', [value]);
+                    }
 
-                        // Enter
-                        if(e.which == 13){
-                            e.preventDefault();
-                            var elem = $(this);
-                            var value = elem.val();
-                            Socket.send('command', [value]);
-                            elem.val('');
-                        }
-                    });
+                    // Enter
+                    if(e.which == 13){
+                        e.preventDefault();
+                        var elem = $(this);
+                        var value = elem.val();
+                        Socket.send('command', [value]);
+                        elem.val('');
+                    }
+
+                    if(lastKeyCode == 17 && e.which == 67 && (new Date() - lastKeyCodeTime <= 500)){
+                        e.preventDefault();
+                        Socket.send('break');
+                    }
+
+                    lastKeyCode = e.which;
+                    lastKeyCodeTime = new Date();
                 });
             });
         </script>

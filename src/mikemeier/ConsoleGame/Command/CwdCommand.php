@@ -2,11 +2,14 @@
 
 namespace mikemeier\ConsoleGame\Command;
 
+use mikemeier\ConsoleGame\Command\Traits\UserCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputInterface;
 
-class CwdCommand extends AbstractUserCommand
+class CwdCommand extends AbstractCommand
 {
+    use UserCommandTrait;
+
     /**
      * @param InputInterface $input
      * @param Console $console

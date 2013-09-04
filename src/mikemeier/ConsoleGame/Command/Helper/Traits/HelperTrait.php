@@ -22,6 +22,18 @@ trait HelperTrait
     }
 
     /**
+     * @param array $helpers
+     * @return $this
+     */
+    public function setHelpers(array $helpers)
+    {
+        foreach($helpers as $helper){
+            $this->addHelper($helper);
+        }
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @throws \Exception
      * @return HelperInterface

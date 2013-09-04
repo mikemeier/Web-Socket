@@ -66,7 +66,9 @@ class ConsoleServer implements MessageComponentInterface
      */
     public function onClose(ConnectionInterface $connection)
     {
-        $this->pool->removeClient($this->getClient($connection));
+        if($client = $this->getClient($connection)){
+            $this->pool->removeClient($client);
+        }
         $this->broadcastUserNumber();
     }
 
@@ -77,6 +79,9 @@ class ConsoleServer implements MessageComponentInterface
     public function onError(ConnectionInterface $connection, \Exception $exception)
     {
         var_dump($exception->getMessage());
+        if($client = $this->getClient($connection)){
+            $this->pool->removeClient($client);
+        }
         $connection->close();
     }
 
@@ -103,6 +108,11 @@ class ConsoleServer implements MessageComponentInterface
             case 'tab':
                 if(isset($data['arguments'][0]) && $client = $this->pool->getClient($connection)){
                     $client->getConsole()->tab(trim($data['arguments'][0]));
+                }
+                break;
+            case 'break':
+                if($client = $this->pool->getClient($connection)){
+                    $client->getConsole()->breakCommand();
                 }
                 break;
         }

@@ -9,6 +9,9 @@ class Ip
      */
     protected $ip;
 
+    /**
+     * @param string $ip
+     */
     public function __construct($ip)
     {
         $this->ip = $ip;

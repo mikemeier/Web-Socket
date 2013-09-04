@@ -1,11 +1,11 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Traits;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 
-abstract class AbstractUserCommand extends AbstractCommand
+trait UserCommandTrait
 {
     use UserHelperTrait;
 
