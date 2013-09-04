@@ -21,7 +21,7 @@ trait InteractiveCommandTrait
      * @param Console $console
      * @return $this
      */
-    protected function stop(Console $console)
+    public function stop(Console $console)
     {
         $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand(null);
         while($signature = array_pop($this->loops)){
@@ -33,7 +33,8 @@ trait InteractiveCommandTrait
     /**
      * @param Console $console
      */
-    protected function setInteractive(Console $console){
+    protected function setInteractive(Console $console)
+    {
         $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand($this);
     }
 

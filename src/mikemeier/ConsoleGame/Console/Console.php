@@ -189,6 +189,7 @@ class Console
 
         $explode = explode(" ", $input);
         $name = isset($explode[0]) ? strtolower($explode[0]) : null;
+        $inputWithoutName = implode(" ", array_slice($explode, 1));
 
         if(!$command = $this->getCommand($name)){
             $this->writeFeedback($input);
@@ -196,7 +197,12 @@ class Console
             return $this;
         }
 
-        $this->processCommand($command, new StringInput(implode(" ", array_slice($explode, 1))), true, $input);
+        if(!$definition = $command->getInputDefinition()){
+            $command->executeRaw($inputWithoutName, $this);
+            return $this;
+        }
+
+        $this->processCommand($command, new StringInput($inputWithoutName), true, $input);
 
         return $this;
     }
@@ -253,6 +259,7 @@ class Console
         }
 
         $input = $input ?: new StringInput('');
+
         try {
             $input->bind($command->getInputDefinition());
             $input->validate();

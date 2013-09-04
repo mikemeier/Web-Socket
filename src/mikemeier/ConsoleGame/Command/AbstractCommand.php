@@ -42,7 +42,7 @@ abstract class AbstractCommand implements CommandInterface
      */
     public function getInputDefinition()
     {
-        return new InputDefinition();
+        return null;
     }
 
     /**
@@ -69,5 +69,25 @@ abstract class AbstractCommand implements CommandInterface
     public function __toString()
     {
         return (string)$this->getName();
+    }
+
+    /**
+     * @param string $input
+     * @param Console $console
+     * @return CommandInterface
+     */
+    public function executeRaw($input, Console $console)
+    {
+        return $this;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param Console $console
+     * @return CommandInterface
+     */
+    public function execute(InputInterface $input, Console $console)
+    {
+        return $this;
     }
 }

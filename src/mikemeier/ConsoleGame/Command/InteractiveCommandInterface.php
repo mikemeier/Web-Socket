@@ -8,6 +8,12 @@ interface InteractiveCommandInterface extends CommandInterface
 {
     /**
      * @param Console $console
+     * @return InteractiveCommandInterface
+     */
+    public function stop(Console $console);
+
+    /**
+     * @param Console $console
      * @param string $input
      * @return InteractiveCommandInterface
      */

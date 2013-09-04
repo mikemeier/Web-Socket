@@ -10,6 +10,7 @@ use mikemeier\ConsoleGame\Network\Dns\DnsBinding;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 class PingCommand extends AbstractCommand implements InteractiveCommandInterface
 {
@@ -40,9 +41,13 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
             return $this;
         }
 
+        $count = $input->getOption('count') ? (int)$input->getOption('count') : false;
         $console->write('Ping '. $binding->getResource()->getName().' ('. $binding->getIp() .')');
-        $this->loopPeriodic($console, 1, function()use($console, $binding){
+        $this->loopPeriodic($console, 1, function()use($console, $binding, &$count){
             $this->ping($console, $binding);
+            if($count !== false && --$count <= 0){
+                $this->stop($console);
+            }
         });
 
         return $this;
@@ -71,6 +76,9 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
      */
     public function getInputDefinition()
     {
-        return new InputDefinition(array(new InputArgument('resource', InputArgument::REQUIRED, 'Destination')));
+        return new InputDefinition(array(
+            new InputArgument('resource', InputArgument::REQUIRED, 'Destination of ping'),
+            new InputOption('count', 'c', InputOption::VALUE_REQUIRED, 'Number of pings to send')
+        ));
     }
 }

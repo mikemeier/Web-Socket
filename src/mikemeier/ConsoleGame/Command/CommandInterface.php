@@ -33,6 +33,13 @@ interface CommandInterface
     public function execute(InputInterface $input, Console $console);
 
     /**
+     * @param string $input
+     * @param Console $console
+     * @return CommandInterface
+     */
+    public function executeRaw($input, Console $console);
+
+    /**
      * @return InputDefinition
      */
     public function getInputDefinition();
