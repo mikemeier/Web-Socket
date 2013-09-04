@@ -285,9 +285,11 @@ class Console
             }
         }catch(\Exception $e){
             if($describeIfNotValid == true){
-                if(false !== $feedback = $command->getFeedback($input, $feedback)){
-                    $this->writeFeedback($feedback);
-                }
+                try {
+                    if(false !== $feedback = $command->getFeedback($input, $feedback)){
+                        $this->writeFeedback($feedback);
+                    }
+                }catch(\Exception $e){ }
                 $this->write('Invalid command call', 'error');
                 $this->describe($command);
             }
