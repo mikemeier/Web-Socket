@@ -38,6 +38,11 @@ class Console
     protected $decorators;
 
     /**
+     * @var History
+     */
+    protected $history;
+
+    /**
      * @param Client $client
      * @param array $commands
      * @param array $decorators
@@ -47,6 +52,7 @@ class Console
         $client->setConsole($this);
 
         $this->formatter = new LineFormatter();
+        $this->history = new History();
         $this->client = $client;
 
         foreach($commands as $command){
@@ -99,6 +105,19 @@ class Console
     }
 
     /**
+     * @param int $int
+     * @return $this
+     */
+    public function history($int)
+    {
+        $this->history->addPosition($int);
+        if(false !== $text = $this->history->current()){
+            $this->sendInputValue($text);
+        }
+        return $this;
+    }
+
+    /**
      * @param string $input
      * @return $this
      */
@@ -123,7 +142,7 @@ class Console
             $command->isAvailable($this)
         ){
             if(false !== $autocomplete = $command->autocomplete(implode(" ", array_slice($explode, 1)), $this)){
-                $this->sendAutocomplete($command->getName().' '.$autocomplete);
+                $this->sendInputValue($command->getName().' '.$autocomplete);
             }
             return $this;
         }
@@ -139,7 +158,7 @@ class Console
 
         $count = count($commands);
         if($count == 1){
-            $this->sendAutocomplete($commands[0]->getName().' ');
+            $this->sendInputValue($commands[0]->getName().' ');
             return $this;
         }
 
@@ -163,12 +182,12 @@ class Console
     }
 
     /**
-     * @param string $text
+     * @param string $value
      * @return $this
      */
-    public function sendAutocomplete($text)
+    public function sendInputValue($value)
     {
-        $this->getClient()->send(new Message('autocomplete', array($text)));
+        $this->getClient()->send(new Message('inputvalue', array($value)));
         return $this;
     }
 
@@ -178,6 +197,8 @@ class Console
      */
     public function process($input)
     {
+        $this->history->add($input);
+
         if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
             $command->onInput($this, $input);
             return $this;

@@ -79,8 +79,8 @@
                     setIp();
                 });
 
-                Socket.on('autocomplete', function(autocomplete){
-                    $('[data-input]').val(autocomplete);
+                Socket.on('inputvalue', function(value){
+                    $('[data-input]').val(value);
                 });
 
                 Socket.on('output', function(){
@@ -127,6 +127,18 @@
                         Socket.send('tab', [value]);
                     }
 
+                    // Key Up --> History next
+                    if(e.which == 38){
+                        e.preventDefault();
+                        Socket.send('history', [-1]);
+                    }
+
+                    // Key Up --> History back
+                    if(e.which == 40){
+                        e.preventDefault();
+                        Socket.send('history', [1]);
+                    }
+
                     // Enter
                     if(e.which == 13){
                         e.preventDefault();
@@ -142,6 +154,7 @@
                         var elem = $(this);
                         var value = elem.val();
                         Socket.send('cancel', [value]);
+                        elem.val('');
                     }
 
                     lastKeyCode = e.which;
