@@ -8,48 +8,46 @@
     }
 
     Socket.prototype = {
-        /**
-         * Connect WebSocket
-         * @param {String} url
-         */
         connect: function(){
             var self = this;
-
             window.setTimeout(function(){
-                var ws = new WebSocket(self.url);
-
-                ws.onopen = function(e){
-                    self.dispatch('open');
-                    window.clearInterval(self.reconnectInterval);
-                    self.reconnectInterval = null;
-                };
-
-                ws.onerror = function(e){
-                    self.dispatch('error');
-                    self.tryReconnect();
-                };
-
-                ws.onclose = function(e){
-                    self.dispatch('close');
-                    self.tryReconnect();
-                };
-
-                ws.onmessage = function(e){
-                    var data = JSON.parse(e.data);
-                    self.dispatch(data.event, data.arguments);
-                };
-
-                self.ws = ws;
+                self.doConnect();
             }, self.reconnectTimout);
         },
 
+        doConnect: function(){
+            var self = this;
+            var ws = new WebSocket(self.url);
+
+            ws.onopen = function(e){
+                self.dispatch('open');
+                window.clearInterval(self.reconnectInterval);
+                self.reconnectInterval = null;
+            };
+
+            ws.onerror = function(e){
+                self.dispatch('error');
+            };
+
+            ws.onclose = function(e){
+                self.dispatch('close');
+                self.tryReconnect();
+            };
+
+            ws.onmessage = function(e){
+                var data = JSON.parse(e.data);
+                self.dispatch(data.event, data.arguments);
+            };
+
+            self.ws = ws;
+        },
+
         tryReconnect: function(){
-            this.ws = null;
             var self = this;
             if(self.reconnectInterval == null){
                 this.reconnectInterval = window.setInterval(function(){
-                    self.connect();
                     self.dispatch('reconnect');
+                    self.doConnect();
                 }, self.reconnectTimout);
             }
         },
