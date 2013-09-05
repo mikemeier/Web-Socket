@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Misc;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -10,7 +11,7 @@ class DateCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return CommandInterface|void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {

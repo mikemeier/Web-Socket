@@ -1,8 +1,10 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Network;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RouterHelperTrait;
+use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 use mikemeier\ConsoleGame\Command\Traits\InteractiveCommandTrait;
 use mikemeier\ConsoleGame\Command\Traits\UserCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
@@ -24,7 +26,7 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return CommandInterface
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {

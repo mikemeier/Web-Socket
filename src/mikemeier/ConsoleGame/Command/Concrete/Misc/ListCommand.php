@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Misc;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Command\CommandInterface;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,7 +13,7 @@ class ListCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {
@@ -23,6 +24,7 @@ class ListCommand extends AbstractCommand
             }
             $console->write(' * '. $command->getName(), 'list');
         }
+        return $this;
     }
 
     /**

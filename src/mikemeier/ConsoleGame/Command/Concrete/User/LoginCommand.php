@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\User;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
@@ -9,6 +10,7 @@ use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RouterHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Command\Interactive\InteractiveInputDefinition;
+use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 use mikemeier\ConsoleGame\Command\Traits\InteractiveCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Network\Exception\OutOfIpsException;
@@ -29,7 +31,7 @@ class LoginCommand extends AbstractCommand implements InteractiveCommandInterfac
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return CommandInterface
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {

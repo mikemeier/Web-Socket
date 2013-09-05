@@ -1,7 +1,9 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Filesystem;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
+use mikemeier\ConsoleGame\Command\AutocompletableCommandInterface;
 use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
@@ -24,7 +26,7 @@ class CdCommand extends AbstractCommand implements AutocompletableCommandInterfa
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return AutocompletableCommandInterface
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {

@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\User;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;

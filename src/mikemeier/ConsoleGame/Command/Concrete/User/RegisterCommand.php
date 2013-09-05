@@ -1,14 +1,14 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\User;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Command\Helper\Traits\DirectoryRepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\EntityManagerHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\User\User;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;

@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Misc;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -12,7 +13,7 @@ class EchoCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return CommandInterface|void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {

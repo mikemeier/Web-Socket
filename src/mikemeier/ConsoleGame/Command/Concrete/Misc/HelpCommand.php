@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Misc;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -13,17 +14,17 @@ class HelpCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {
         $commandName = $input->getArgument('command');
         if(!($command = $console->getCommand($commandName)) || !$command->isAvailable($console)){
             $console->writeCommandNotFound($commandName);
-            return;
+            return $this;
         }
-
         $console->describe($command);
+        return $this;
     }
 
     /**

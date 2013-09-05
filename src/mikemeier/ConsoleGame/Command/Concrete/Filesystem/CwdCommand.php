@@ -1,7 +1,8 @@
 <?php
 
-namespace mikemeier\ConsoleGame\Command;
+namespace mikemeier\ConsoleGame\Command\Concrete\Filesystem;
 
+use mikemeier\ConsoleGame\Command\AbstractCommand;
 use mikemeier\ConsoleGame\Command\Traits\UserCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,11 +14,12 @@ class CwdCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param Console $console
-     * @return void
+     * @return $this
      */
     public function execute(InputInterface $input, Console $console)
     {
         $console->writeEmptyDecoratedLine();
+        return $this;
     }
 
     /**

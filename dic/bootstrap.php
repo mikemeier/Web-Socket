@@ -67,8 +67,8 @@ $helpers = array(
  * Commands
  */
 $finder = new Finder();
-$finder->files()->name('*Command.php')->in(__DIR__.'/../src/mikemeier/ConsoleGame/Command');
-$prefix = 'mikemeier\\ConsoleGame\\Command';
+$finder->files()->name('*Command.php')->in(__DIR__.'/../src/mikemeier/ConsoleGame/Command/Concrete');
+$prefix = 'mikemeier\\ConsoleGame\\Command\\Concrete';
 
 /** @var SplFileInfo $file */
 foreach($finder as $file){
