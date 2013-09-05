@@ -23,6 +23,14 @@
                 }
             }
 
+            function setStealth(flag){
+                if(flag){
+                    $('[data-input]').css('width', '1px');
+                }else{
+                    $('[data-input]').css('width', '100%');
+                }
+            }
+
             function setUserCount(number){
                 var container = $('[data-user-count-container]');
                 if(!number){
@@ -96,6 +104,10 @@
 
                 Socket.on('reconnect', function(){
                     setStatus('Reconnecting');
+                });
+
+                Socket.on('inputstealth', function(flag){
+                    setStealth(flag);
                 });
 
                 Socket.on('error', function(){

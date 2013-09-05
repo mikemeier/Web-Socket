@@ -70,6 +70,11 @@ html, body {
     margin-right: 8px;
 }
 
+#output .question {
+    color: #835a00;
+    font-style: italic;
+}
+
 #output .path {
     margin-left: -8px;
     margin-right: 8px;

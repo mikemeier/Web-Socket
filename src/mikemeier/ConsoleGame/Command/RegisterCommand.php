@@ -49,10 +49,7 @@ class RegisterCommand extends AbstractCommand
         $console->write('OK', 'success');
 
         if($input->getOption('login')){
-            $console->processCommand($console->getCommand('login'), new ArrayInput(array(
-                'username' => $username,
-                'password' => $password
-            )));
+            $console->processCommand($console->getCommand('login'));
         }
 
         return $this;

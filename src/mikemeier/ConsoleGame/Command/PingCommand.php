@@ -91,7 +91,7 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
 
         $this->baseOnCancel($console, $input);
 
-        $name = $binding instanceof IpDnsResourceBinding ? $binding->getResource()->getResourceName() : $binding->getIp()->getIp();
+        $name = $binding instanceof IpDnsResourceBinding ? $binding->getResource()->getResourceName() : $binding->getIp();
         $console->write('--- '. $name .' ping statistics ---');
         $total = $statistic['online'] + $statistic['offline'];
         $loss = round(100 / $total * $statistic['offline'], 1);

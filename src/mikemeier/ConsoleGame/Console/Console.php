@@ -193,6 +193,16 @@ class Console
     }
 
     /**
+     * @param bool $flag
+     * @return $this
+     */
+    public function sendInputStealth($flag)
+    {
+        $this->getClient()->send(new Message('inputstealth', array((bool)$flag)));
+        return $this;
+    }
+
+    /**
      * @param string $input
      * @return $this
      */

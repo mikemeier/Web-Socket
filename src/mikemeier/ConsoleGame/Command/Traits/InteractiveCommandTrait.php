@@ -7,6 +7,10 @@ use mikemeier\ConsoleGame\Command\Helper\Traits\LoopHelperTrait;
 use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 use mikemeier\ConsoleGame\Console\Console;
 use React\EventLoop\LoopInterface;
+use mikemeier\ConsoleGame\Command\Interactive\InteractiveInputDefinition;
+use Symfony\Component\Console\Descriptor\TextDescriptor;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 trait InteractiveCommandTrait
 {
@@ -16,7 +20,7 @@ trait InteractiveCommandTrait
     /**
      * @var array
      */
-    protected $loops = array();
+    protected $loopSignatures = array();
 
     /**
      * @param Console $console
@@ -29,7 +33,9 @@ trait InteractiveCommandTrait
             ->clearData()
         ;
 
-        while($signature = array_pop($this->loops)){
+        $console->sendInputStealth(false);
+
+        while($signature = array_pop($this->loopSignatures)){
             $this->getLoop()->cancelTimer($signature);
         }
 
@@ -44,6 +50,7 @@ trait InteractiveCommandTrait
      */
     protected function setEnvironmentData(Console $console, $key, $value)
     {
+        $key = 'interactivecommand_'.$this->getName().'_'.$key;
         $this->getEnvironmentHelper()->getEnvironment($console)->setData($key, $value);
         return $this;
     }
@@ -56,6 +63,7 @@ trait InteractiveCommandTrait
      */
     protected function getEnvironmentData(Console $console, $key, $default = null)
     {
+        $key = 'interactivecommand_'.$this->getName().'_'.$key;
         return $this->getEnvironmentHelper()->getEnvironment($console)->getData($key, $default);
     }
 
@@ -83,23 +91,55 @@ trait InteractiveCommandTrait
      * @param Console $console
      * @param int $interval in seconds
      * @param callable $callback
+     * @param bool $setInteractive
      * @return string
      */
-    protected function loop(Console $console, $interval, $callback)
+    protected function loop(Console $console, $interval, $callback, $setInteractive = false)
     {
-        return $this->loops[] = $this->getLoop()->addTimer($interval, $callback);
+        if(true === $setInteractive){
+            $this->setInteractive($console);
+        }
+        return $this->loopSignatures[] = $this->getLoop()->addTimer($interval, $callback);
     }
 
     /**
      * @param Console $console
      * @param int $interval in seconds
      * @param callable $callback
+     * @param bool $setInteractive
      * @return string
      */
-    protected function loopPeriodic(Console $console, $interval, $callback)
+    protected function loopPeriodic(Console $console, $interval, $callback, $setInteractive = true)
     {
+        if(true === $setInteractive){
+            $this->setInteractive($console);
+        }
+        return $this->loopSignatures[] = $this->getLoop()->addPeriodicTimer($interval, $callback);
+    }
+
+    /**
+     * @return InteractiveInputDefinition[]
+     */
+    protected function getInteractiveInputDefinitions()
+    {
+        return array();
+    }
+
+    /**
+     * @param Console $console
+     * @param string $key
+     * @return $this
+     * @throws \Exception
+     */
+    protected function activateInteractiveInputDefinition(Console $console, $key)
+    {
+        $definitions = $this->getInteractiveInputDefinitions();
+        if(!isset($definitions[$key])){
+            throw new \Exception("InteractiveInputDefinition with key $key not found");
+        }
+        $this->setEnvironmentData($console, 'interactiveinputdefinition', $definitions[$key]);
         $this->setInteractive($console);
-        return $this->loops[] = $this->getLoop()->addPeriodicTimer($interval, $callback);
+        return $this;
     }
 
     /**
@@ -121,6 +161,26 @@ trait InteractiveCommandTrait
      */
     public function onInput(Console $console, $input)
     {
+        /** @var InteractiveInputDefinition $definition */
+        if($definition = $this->getEnvironmentData($console, 'interactiveinputdefinition')){
+            $input = new StringInput($input);
+            try{
+                $input->bind($definition->getDefinition());
+                $input->validate();
+                if($key = call_user_func_array($definition->getCallable(), array($console, $input))){
+                    $this->activateInteractiveInputDefinition($console, $key);
+                }
+            }catch(\Exception $e){
+                $console->write('Invalid command call', 'error');
+                $console->write('Usage:', 'description');
+                $descriptor = new TextDescriptor();
+                $output = new BufferedOutput();
+                $descriptor->describe($output, $definition->getDefinition());
+                foreach(array_slice(explode("\n", $output->fetch()), 0, -2) as $line){
+                    $console->write($line, 'description');
+                }
+            }
+        }
         return $this;
     }
 
@@ -133,4 +193,9 @@ trait InteractiveCommandTrait
     {
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getName();
 }

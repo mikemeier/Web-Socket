@@ -8,6 +8,8 @@ use mikemeier\ConsoleGame\Command\Helper\Traits\FeedbackHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RepositoryHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\RouterHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\UserHelperTrait;
+use mikemeier\ConsoleGame\Command\Interactive\InteractiveInputDefinition;
+use mikemeier\ConsoleGame\Command\Traits\InteractiveCommandTrait;
 use mikemeier\ConsoleGame\Console\Console;
 use mikemeier\ConsoleGame\Network\Exception\OutOfIpsException;
 use mikemeier\ConsoleGame\User\User;
@@ -15,14 +17,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 
-class LoginCommand extends AbstractCommand
+class LoginCommand extends AbstractCommand implements InteractiveCommandInterface
 {
     use UserHelperTrait;
     use RepositoryHelperTrait;
     use DirectoryRepositoryHelperTrait;
     use FeedbackHelperTrait;
-    use EnvironmentHelperTrait;
     use RouterHelperTrait;
+    use InteractiveCommandTrait;
 
     /**
      * @param InputInterface $input
@@ -36,55 +38,85 @@ class LoginCommand extends AbstractCommand
             return $this;
         }
 
-        $username = strtolower($input->getArgument('username'));
-        $password = $input->getArgument('password');
+        $console->write('Username:', 'question');
+        $this->activateInteractiveInputDefinition($console, 'username');
 
-        $userRepo = $this->getRepositoryHelper()->getRepository(new User());
+        return $this;
+    }
 
-        /** @var User $user */
-        if(!$user = $userRepo->findOneBy(array('username' => $username, 'password' => $password))){
+    /**
+     * @param Console $console
+     * @param InputInterface $input
+     * @return string
+     */
+    public function onUsername(Console $console, InputInterface $input)
+    {
+        $username = $input->getArgument('username');
+        $this->setEnvironmentData($console, 'username', $username);
+        $console->write($username);
+        $console->write('Password:', 'question');
+        $console->sendInputStealth(true);
+        return 'password';
+    }
+
+    /**
+     * @param Console $console
+     * @param InputInterface $input
+     * @return string
+     */
+    public function onPassword(Console $console, InputInterface $input)
+    {
+        $console->sendInputStealth(false);
+        $username = $this->getEnvironmentData($console, 'username');
+
+        if(!$user = $this->getUser($username, $input->getArgument('password'))){
             $console->write('Username and/or password wrong', 'error');
-            return $this;
+            $console->write('Username:', 'question');
+            return 'username';
         }
-
-        $environment = $this->getEnvironmentHelper()->getEnvironment($console);
 
         try {
             $this->getUserHelper()->loginUser(
                 $console,
                 $user,
                 $this->getDirectoryRepository(),
-                $environment,
+                $this->getEnvironmentHelper()->getEnvironment($console),
                 $this->getRouterHelper()->getRouter()
             );
-            $console->write('Welcome back '. $user->getUsername(), 'welcome');
         }catch(OutOfIpsException $e){
-            $console->write('No more IPs from DHCP... Could not login', 'error');
+            $console->write('No more IPs from DHCP - Could not login', 'error');
         }
 
-        return $this;
+        $console->write('Loggedin as '. $username, 'success');
+        $console->writeEmptyDecoratedLine();
+        $this->stop($console);
     }
 
     /**
-     * @param InputInterface $input
-     * @param string $default
-     * @return string
+     * @return InteractiveInputDefinition[]
      */
-    public function getFeedback(InputInterface $input, $default = null)
+    protected function getInteractiveInputDefinitions()
     {
-        return $this->getFeedbackHelper()->prepareFeedback($this, $input, array(
-            'password' => str_repeat('*', strlen($input->getArgument('password')))
-        ));
+        return array(
+            'username' => new InteractiveInputDefinition(
+                new InputDefinition(array(new InputArgument('username'))),
+                array($this, 'onUsername')
+            ),
+            'password' => new InteractiveInputDefinition(
+                new InputDefinition(array(new InputArgument('password'))),
+                array($this, 'onPassword')
+            )
+        );
     }
 
     /**
-     * @return InputDefinition
+     * @param string $username
+     * @param string $password
+     * @return User
      */
-    public function getInputDefinition()
+    protected function getUser($username, $password)
     {
-        return new InputDefinition(array(
-            new InputArgument('username', InputArgument::REQUIRED, 'Username for login'),
-            new InputArgument('password', InputArgument::REQUIRED, 'Password for login')
-        ));
+        $userRepo = $this->getRepositoryHelper()->getRepository(new User());
+        return $userRepo->findOneBy(array('username' => $username, 'password' => $password));
     }
 }
