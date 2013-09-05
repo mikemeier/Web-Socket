@@ -106,7 +106,7 @@ class Environment
      * @param InteractiveCommandInterface $interactiveCommand
      * @return Environment
      */
-    public function setInteractiveCommand($interactiveCommand)
+    public function setInteractiveCommand(InteractiveCommandInterface $interactiveCommand = null)
     {
         $this->interactiveCommand = $interactiveCommand;
         return $this;

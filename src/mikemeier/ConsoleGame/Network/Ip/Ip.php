@@ -2,18 +2,27 @@
 
 namespace mikemeier\ConsoleGame\Network\Ip;
 
+use mikemeier\ConsoleGame\Network\Service\Dhcp;
+
 class Ip
 {
+    /**
+     * @var Dhcp
+     */
+    protected $dhcp;
+
     /**
      * @var string
      */
     protected $ip;
 
     /**
+     * @param Dhcp $dhcp
      * @param string $ip
      */
-    public function __construct($ip)
+    public function __construct(Dhcp $dhcp, $ip)
     {
+        $this->dhcp = $dhcp;
         $this->ip = $ip;
     }
 
@@ -31,5 +40,13 @@ class Ip
     public function getIp()
     {
         return $this->ip;
+    }
+
+    /**
+     * @return Dhcp
+     */
+    public function getDhcp()
+    {
+        return $this->dhcp;
     }
 }

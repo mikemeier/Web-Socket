@@ -53,9 +53,7 @@ class LoginCommand extends AbstractCommand implements InteractiveCommandInterfac
      */
     public function onUsername(Console $console, InputInterface $input)
     {
-        $username = $input->getArgument('username');
-        $this->setEnvironmentData($console, 'username', $username);
-        $console->write($username);
+        $this->setEnvironmentData($console, 'username', $input->getArgument('username'));
         $console->write('Password:', 'question');
         $console->sendInputStealth(true);
         return 'password';
@@ -92,6 +90,8 @@ class LoginCommand extends AbstractCommand implements InteractiveCommandInterfac
         $console->write('Loggedin as '. $username, 'success');
         $console->writeEmptyDecoratedLine();
         $this->stop($console);
+
+        return $this;
     }
 
     /**

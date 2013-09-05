@@ -34,12 +34,10 @@ $conn = array(
     'path' => __DIR__.'/../cache/db.sqlite',
 );
 
-$em = EntityManager::create($conn, $config);
-
-$lanDhcp = new Dhcp('10.0.0.0', '10.255.255.255');
-$wanDhcp = new Dhcp('213.150.0.0', '220.255.255.255');
-
-$router = new Router($lanDhcp, new Dns());
+$em         = EntityManager::create($conn, $config);
+$lanDhcp    = new Dhcp('10.0.0.0', '10.255.255.255');
+$wanDhcp    = new Dhcp('213.150.0.0', '220.255.255.255');
+$router     = new Router($lanDhcp, new Dns());
 
 $container = new Container(array(
     'em' => $em,

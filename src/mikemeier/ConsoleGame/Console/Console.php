@@ -11,7 +11,6 @@ use mikemeier\ConsoleGame\Output\Line\LineFormatter;
 use mikemeier\ConsoleGame\Server\Client\Client;
 use mikemeier\ConsoleGame\Server\Message\Message;
 use Symfony\Component\Console\Descriptor\TextDescriptor;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -148,9 +147,13 @@ class Console
             return $this;
         }
 
+        // Some data given in input
+        if(count($explode) > 1){
+            return $this;
+        }
+
         /** @var CommandInterface[] $commands */
         $commands = array();
-
         foreach($this->getCommands() as $cmdName => $command){
             if($command->isAvailable($this) && strtolower(substr($cmdName, 0, strlen($name))) == strtolower($name)){
                 $commands[] = $command;
@@ -208,8 +211,6 @@ class Console
      */
     public function process($input)
     {
-        $this->history->add($input);
-
         if($command = $this->getClient()->getEnvironment()->getInteractiveCommand()){
             $command->onInput($this, $input);
             return $this;
@@ -218,6 +219,8 @@ class Console
         if(!$input){
             return $this;
         }
+
+        $this->history->add($input);
 
         $explode = explode(" ", $input);
         $name = isset($explode[0]) ? strtolower($explode[0]) : null;
@@ -341,6 +344,15 @@ class Console
     {
         $this->writeLines(array($line));
         return $this;
+    }
+
+    /**
+     * @param Line $line
+     * @return ModifiableLine
+     */
+    public function writeModifiableLine(Line $line)
+    {
+
     }
 
     /**

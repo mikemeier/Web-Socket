@@ -2,6 +2,10 @@
 
 namespace mikemeier\ConsoleGame\Network\Service;
 
+use mikemeier\ConsoleGame\Console\Console;
+use mikemeier\ConsoleGame\Console\Menu\Menu;
+use mikemeier\ConsoleGame\Console\Type\ConsoleFactory;
+use mikemeier\ConsoleGame\Console\Type\ConsoleInterface;
 use mikemeier\ConsoleGame\Network\Dns\Dns;
 use mikemeier\ConsoleGame\Network\Ip\Ip;
 use mikemeier\ConsoleGame\Network\IpResourceBinding\IpResourceBinding;
@@ -44,6 +48,7 @@ class Router implements ConnectableServiceInterface
      */
     public function __construct(Dhcp $dhcp, Dns $dns)
     {
+        $dhcp->setRouter($this);
         $this->dhcp = $dhcp;
         $this->dns = $dns;
 
@@ -156,5 +161,24 @@ class Router implements ConnectableServiceInterface
     public function allowLogin()
     {
         return true;
+    }
+
+    /**
+     * @param Console $clientConsole
+     * @return ConsoleInterface
+     */
+    public function getConsole(Console $clientConsole)
+    {
+        $menu = new Menu('root');
+
+        return ConsoleFactory::createTelnetConsole($clientConsole, $menu);
+    }
+
+    /**
+     * @return int
+     */
+    public function getPort()
+    {
+        return 22;
     }
 }

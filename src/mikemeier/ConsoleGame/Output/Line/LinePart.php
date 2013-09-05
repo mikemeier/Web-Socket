@@ -41,4 +41,24 @@ class LinePart
     {
         return $this->styles;
     }
+
+    /**
+     * @param string $text
+     * @return LinePart
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+        return $this;
+    }
+
+    /**
+     * @param array $styles
+     * @return LinePart
+     */
+    public function setStyles(array $styles)
+    {
+        $this->styles = $styles;
+        return $this;
+    }
 }

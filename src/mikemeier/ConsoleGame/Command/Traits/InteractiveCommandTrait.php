@@ -4,7 +4,6 @@ namespace mikemeier\ConsoleGame\Command\Traits;
 
 use mikemeier\ConsoleGame\Command\Helper\Traits\EnvironmentHelperTrait;
 use mikemeier\ConsoleGame\Command\Helper\Traits\LoopHelperTrait;
-use mikemeier\ConsoleGame\Command\InteractiveCommandInterface;
 use mikemeier\ConsoleGame\Console\Console;
 use React\EventLoop\LoopInterface;
 use mikemeier\ConsoleGame\Command\Interactive\InteractiveInputDefinition;
@@ -50,7 +49,7 @@ trait InteractiveCommandTrait
      */
     protected function setEnvironmentData(Console $console, $key, $value)
     {
-        $key = 'interactivecommand_'.$this->getName().'_'.$key;
+        $this->getEnvironmentDataKey($key);
         $this->getEnvironmentHelper()->getEnvironment($console)->setData($key, $value);
         return $this;
     }
@@ -63,7 +62,7 @@ trait InteractiveCommandTrait
      */
     protected function getEnvironmentData(Console $console, $key, $default = null)
     {
-        $key = 'interactivecommand_'.$this->getName().'_'.$key;
+        $this->getEnvironmentDataKey($key);
         return $this->getEnvironmentHelper()->getEnvironment($console)->getData($key, $default);
     }
 
@@ -73,9 +72,6 @@ trait InteractiveCommandTrait
      */
     protected function setInteractive(Console $console)
     {
-        if(!$this instanceof InteractiveCommandInterface){
-            throw new \Exception("Command has to implement InteractiveCommandInterface");
-        }
         $this->getEnvironmentHelper()->getEnvironment($console)->setInteractiveCommand($this);
     }
 
@@ -137,7 +133,7 @@ trait InteractiveCommandTrait
         if(!isset($definitions[$key])){
             throw new \Exception("InteractiveInputDefinition with key $key not found");
         }
-        $this->setEnvironmentData($console, 'interactiveinputdefinition', $definitions[$key]);
+        $this->setEnvironmentData($console, $this->getEnvironmentDataKey('interactiveinputdefinition'), $definitions[$key]);
         $this->setInteractive($console);
         return $this;
     }
@@ -162,12 +158,12 @@ trait InteractiveCommandTrait
     public function onInput(Console $console, $input)
     {
         /** @var InteractiveInputDefinition $definition */
-        if($definition = $this->getEnvironmentData($console, 'interactiveinputdefinition')){
+        if($definition = $this->getEnvironmentData($console, $this->getEnvironmentDataKey('interactiveinputdefinition'))){
             $input = new StringInput($input);
             try{
                 $input->bind($definition->getDefinition());
                 $input->validate();
-                if($key = call_user_func_array($definition->getCallable(), array($console, $input))){
+                if(is_string($key = call_user_func_array($definition->getCallable(), array($console, $input)))){
                     $this->activateInteractiveInputDefinition($console, $key);
                 }
             }catch(\Exception $e){
@@ -192,6 +188,15 @@ trait InteractiveCommandTrait
     public function onTab(Console $console, $input)
     {
         return $this;
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    protected function getEnvironmentDataKey($key)
+    {
+        return 'interactivecommand_'.$this->getName().'_'.$key;
     }
 
     /**

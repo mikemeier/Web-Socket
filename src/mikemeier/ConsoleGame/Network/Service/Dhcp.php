@@ -8,6 +8,11 @@ use mikemeier\ConsoleGame\Network\Ip\Ip;
 class Dhcp
 {
     /**
+     * @var Router
+     */
+    protected $router;
+
+    /**
      * @var int
      */
     protected $start;
@@ -28,8 +33,8 @@ class Dhcp
     protected $ips;
 
     /**
-     * @param string $start
-     * @param string $end
+     * @param $start
+     * @param $end
      */
     public function __construct($start, $end)
     {
@@ -48,7 +53,7 @@ class Dhcp
             throw new OutOfIpsException();
         }
         $this->lastIp = $newIp;
-        return $this->ips[] = new Ip(long2ip($newIp));
+        return $this->ips[] = new Ip($this, long2ip($newIp));
     }
 
     /**
@@ -57,5 +62,23 @@ class Dhcp
     public function getIps()
     {
         return $this->ips;
+    }
+
+    /**
+     * @return Router
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    /**
+     * @param Router $router
+     * @return Dhcp
+     */
+    public function setRouter(Router $router)
+    {
+        $this->router = $router;
+        return $this;
     }
 }

@@ -70,14 +70,4 @@ abstract class AbstractCommand implements CommandInterface
     {
         return (string)$this->getName();
     }
-
-    /**
-     * @param InputInterface $input
-     * @param Console $console
-     * @return CommandInterface
-     */
-    public function execute(InputInterface $input, Console $console)
-    {
-        return $this;
-    }
 }

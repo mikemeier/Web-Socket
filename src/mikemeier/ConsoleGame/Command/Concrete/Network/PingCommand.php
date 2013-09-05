@@ -34,7 +34,7 @@ class PingCommand extends AbstractCommand implements InteractiveCommandInterface
         $router = $this->getRouterHelper()->getRouter();
 
         if(!$binding = $router->getBinding($resource)){
-            $console->write("cannot resolve $resource: Unknown host", 'error');
+            $console->write("Cannot resolve $resource: Unknown host", 'error');
             return $this;
         }
 
