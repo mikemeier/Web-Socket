@@ -16,7 +16,8 @@ use mikemeier\ConsoleGame\Command\Helper\FeedbackHelper;
 use mikemeier\ConsoleGame\Command\Helper\RepositoryHelper;
 use mikemeier\ConsoleGame\Command\Helper\UserHelper;
 use mikemeier\ConsoleGame\Command\Helper\RouterHelper;
-use mikemeier\ConsoleGame\Network\Service\Router;
+use mikemeier\ConsoleGame\Network\Service\InternetRouter;
+use mikemeier\ConsoleGame\Network\Service\Isp;
 use mikemeier\ConsoleGame\Network\Service\Dhcp;
 use mikemeier\ConsoleGame\Network\Dns\Dns;
 use mikemeier\ConsoleGame\Command\Helper\LoopHelper;
@@ -35,9 +36,14 @@ $conn = array(
 );
 
 $em         = EntityManager::create($conn, $config);
-$lanDhcp    = new Dhcp('10.0.0.0', '10.255.255.255');
-$wanDhcp    = new Dhcp('213.150.0.0', '220.255.255.255');
-$router     = new Router($lanDhcp, new Dns());
+$router     = new InternetRouter(
+    new Isp(
+        new Dhcp('213.150.0.0', '220.255.255.255'),
+        new Dns()
+    ),
+    new Dhcp('10.0.0.0', '10.255.255.255'),
+    new Dns()
+);
 
 $container = new Container(array(
     'em' => $em,

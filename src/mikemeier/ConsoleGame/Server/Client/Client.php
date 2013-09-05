@@ -3,13 +3,15 @@
 namespace mikemeier\ConsoleGame\Server\Client;
 
 use mikemeier\ConsoleGame\Console\Environment;
+use mikemeier\ConsoleGame\Network\Message\NetsendMessage;
 use mikemeier\ConsoleGame\Network\Resource\DnsResourceInterface;
+use mikemeier\ConsoleGame\Network\Resource\ReceiveNetsendMessageInterface;
 use mikemeier\ConsoleGame\Server\Message\Message;
 use Ratchet\ConnectionInterface;
 use mikemeier\ConsoleGame\User\User;
 use mikemeier\ConsoleGame\Console\Console;
 
-class Client implements DnsResourceInterface
+class Client implements DnsResourceInterface, ReceiveNetsendMessageInterface
 {
     /**
      * @var ConnectionInterface
@@ -121,6 +123,23 @@ class Client implements DnsResourceInterface
     {
         try {
             $this->connection->send('ping');
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
+    /**
+     * @param NetsendMessage $message
+     * @return bool
+     */
+    public function receiveNetsendMessage(NetsendMessage $message)
+    {
+        try {
+            $this->getConsole()
+                ->write('NetsendMessage from '. $message->getSender(), array('netsend', 'sender'))
+                ->write($message->getText(), array('netsend', 'message'))
+            ;
             return true;
         }catch(\Exception $e){
             return false;

@@ -21,7 +21,7 @@ class Container implements ContainerInterface
 
     /**
      * @param string $id
-     * @param object $service
+     * @param mixed $service
      * @return ContainerInterface
      */
     public function set($id, $service)

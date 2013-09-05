@@ -55,7 +55,7 @@ html, body {
 }
 
 #output .welcome {
-    color: blue;
+    color: rgba(255, 208, 0, 0.70);
 }
 
 #output .list {
@@ -71,7 +71,7 @@ html, body {
 }
 
 #output .question {
-    color: #835a00;
+    color: #fab400;
     font-style: italic;
 }
 
@@ -87,6 +87,14 @@ html, body {
 
 #output .error {
     color: red;
+}
+
+#output .netsend {
+    font-style: italic;
+}
+
+#output .netsend.sender{
+    font-weight: bold;
 }
 
 #output .success {

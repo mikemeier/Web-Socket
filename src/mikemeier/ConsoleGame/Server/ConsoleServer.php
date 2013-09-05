@@ -83,6 +83,7 @@ class ConsoleServer implements MessageComponentInterface
             $this->pool->removeClient($client);
         }
         $connection->close();
+        $this->broadcastUserNumber();
     }
 
     /**

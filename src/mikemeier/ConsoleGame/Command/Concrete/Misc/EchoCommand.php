@@ -26,6 +26,6 @@ class EchoCommand extends AbstractCommand
      */
     public function getInputDefinition()
     {
-        return new InputDefinition(array(new InputArgument('text', InputArgument::IS_ARRAY)));
+        return new InputDefinition(array(new InputArgument('text', InputArgument::IS_ARRAY|InputArgument::REQUIRED)));
     }
 }

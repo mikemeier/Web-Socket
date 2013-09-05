@@ -55,5 +55,7 @@ class IpconfigCommand extends AbstractCommand
         }
 
         $console->write('');
+
+        return $this;
     }
 }

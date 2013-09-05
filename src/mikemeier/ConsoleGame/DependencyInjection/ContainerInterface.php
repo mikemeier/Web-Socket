@@ -12,7 +12,7 @@ interface ContainerInterface
 
     /**
      * @param string $id
-     * @param object $object
+     * @param mixed $object
      * @return ContainerInterface
      */
     public function set($id, $object);
