@@ -156,20 +156,21 @@ class Console
         $commands = array();
         foreach($this->getCommands() as $cmdName => $command){
             if($command->isAvailable($this) && strtolower(substr($cmdName, 0, strlen($name))) == strtolower($name)){
-                $commands[] = $command;
+                $commands[$cmdName] = $command;
             }
         }
 
         $count = count($commands);
         if($count == 1){
-            $this->sendInputValue($commands[0]->getName().' ');
+            $command = key($commands);
+            $this->sendInputValue($command.' ');
             return $this;
         }
 
         if($count > 1){
             $this->write('', null, true);
-            foreach($commands as $command){
-                $this->write(' * '. $command->getName(), 'description');
+            foreach($commands as $cmdName => $command){
+                $this->write(' * '. $cmdName, 'description');
             }
         }
 

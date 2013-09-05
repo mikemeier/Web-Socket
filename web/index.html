@@ -41,6 +41,10 @@
                 $('[data-user-count]').html(number);
             }
 
+            function clearOutput(){
+                $('[data-output]').html('');
+            }
+
             function setStatus(status){
                 $('[data-status]').html(status);
                 $('[data-status-container]').removeClass().addClass(status.toLowerCase());
@@ -75,6 +79,10 @@
 
                 Socket.on('usernumber', function(number){
                     setUserCount(number);
+                });
+
+                Socket.on('clear', function(){
+                    clearOutput();
                 });
 
                 Socket.on('loggedin', function(username, ip){
